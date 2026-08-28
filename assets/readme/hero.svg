@@ -1,44 +1,91 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520" role="img" aria-labelledby="title desc">
-  <title id="title">ELX Level</title>
-  <desc id="desc">A minimal map connecting four workflow levels with automatic, confirm, and manual-only execution modes.</desc>
-  <rect width="1200" height="520" rx="10" fill="#09111F"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520" role="img" aria-labelledby="heroTitle heroDesc">
+  <title id="heroTitle">ELX Level：四级项目工作流</title>
+  <desc id="heroDesc">为个人开发者而设的四级项目工作流：责任模式决定 LEVEL 1 到 4 的强度，执行策略分为 AUTO、CONFIRM、MANUAL_ONLY，普通进度不打断，公开交付集中确认。</desc>
 
-  <g font-family="Inter, Segoe UI, system-ui, sans-serif">
-    <text x="76" y="128" fill="#F6F8FB" font-size="52" font-weight="700">ELX Level</text>
-    <text x="76" y="178" fill="#9EACBF" font-size="24">Choose the right workflow depth. Keep the full project memory.</text>
+  <defs>
+    <pattern id="dots" width="28" height="28" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.2" fill="#16233B"/>
+    </pattern>
+    <marker id="arrowTeal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 Z" fill="#5CE8CF"/>
+    </marker>
+  </defs>
 
-    <g transform="translate(76 258)">
-      <path d="M90 38 H930" fill="none" stroke="#334155" stroke-width="2"/>
-      <path d="M90 38 H650" fill="none" stroke="#65E6D1" stroke-width="2"/>
-      <g>
-        <rect width="180" height="76" rx="10" fill="#101D30" stroke="#65E6D1" stroke-width="2"/>
-        <text x="90" y="31" text-anchor="middle" fill="#F6F8FB" font-size="22" font-weight="650">LEVEL 1</text>
-        <text x="90" y="58" text-anchor="middle" fill="#9EACBF" font-size="20">Build</text>
-      </g>
-      <g transform="translate(280)">
-        <rect width="180" height="76" rx="10" fill="#101D30" stroke="#65E6D1" stroke-width="2"/>
-        <text x="90" y="31" text-anchor="middle" fill="#F6F8FB" font-size="22" font-weight="650">LEVEL 2</text>
-        <text x="90" y="58" text-anchor="middle" fill="#9EACBF" font-size="20">Operate</text>
-      </g>
-      <g transform="translate(560)">
-        <rect width="180" height="76" rx="10" fill="#101D30" stroke="#334155" stroke-width="2"/>
-        <text x="90" y="31" text-anchor="middle" fill="#F6F8FB" font-size="22" font-weight="650">LEVEL 3</text>
-        <text x="90" y="58" text-anchor="middle" fill="#9EACBF" font-size="20">Improve</text>
-      </g>
-      <g transform="translate(840)">
-        <rect width="180" height="76" rx="10" fill="#101D30" stroke="#334155" stroke-width="2"/>
-        <text x="90" y="31" text-anchor="middle" fill="#F6F8FB" font-size="22" font-weight="650">LEVEL 4</text>
-        <text x="90" y="58" text-anchor="middle" fill="#9EACBF" font-size="20">Orchestrate</text>
-      </g>
+  <rect width="1200" height="520" rx="16" fill="#0A101C"/>
+  <rect width="1200" height="520" rx="16" fill="url(#dots)" opacity="0.6"/>
+  <ellipse cx="950" cy="90" rx="360" ry="190" fill="#5CE8CF" opacity="0.05"/>
+  <ellipse cx="180" cy="480" rx="320" ry="160" fill="#FFB454" opacity="0.04"/>
+
+  <g font-family="'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei','Noto Sans SC',sans-serif">
+
+    <!-- 左侧：品牌与一句话价值 -->
+    <rect x="72" y="60" width="170" height="34" rx="17" fill="#101D30" stroke="#2A3B55" stroke-width="1.5"/>
+    <text x="157" y="82" text-anchor="middle" font-size="15" font-weight="700" letter-spacing="2" fill="#7FD9C8">VERSION 2.0</text>
+
+    <text x="72" y="152" font-size="62" font-weight="800" letter-spacing="3"><tspan fill="#5CE8CF">ELX</tspan><tspan fill="#F2F6FC"> LEVEL</tspan></text>
+
+    <text x="72" y="202" font-size="27" font-weight="600" fill="#E8EFF9">选择刚好的流程强度，保留完整项目记忆</text>
+    <text x="72" y="238" font-size="20" fill="#9FB2C9">为个人开发者而设的四级项目工作流 Skill</text>
+    <text x="72" y="270" font-size="20" fill="#7286A0">Codex · Claude Code · Cursor 三平台适配</text>
+
+    <!-- 右侧：责任档位仪表 -->
+    <rect x="688" y="64" width="440" height="268" rx="16" fill="#0F1B2E" stroke="#24354F" stroke-width="1.5"/>
+    <text x="716" y="100" font-size="15" font-weight="700" letter-spacing="3" fill="#5CE8CF">RESPONSIBILITY METER</text>
+    <text x="1096" y="100" text-anchor="end" font-size="15" font-weight="600" fill="#7286A0">LEVEL 1–4</text>
+
+    <g>
+      <text x="716" y="139" font-size="19" font-weight="800" fill="#5CE8CF">L1</text>
+      <text x="756" y="139" font-size="18" fill="#C7D3E3">快速开发</text>
+      <rect x="850" y="123" width="250" height="12" rx="6" fill="#1B2B45"/>
+      <rect x="850" y="123" width="62" height="12" rx="6" fill="#5CE8CF"/>
+      <line x1="912.5" y1="119" x2="912.5" y2="139" stroke="#24354F" stroke-width="2"/>
+      <line x1="975" y1="119" x2="975" y2="139" stroke="#24354F" stroke-width="2"/>
+      <line x1="1037.5" y1="119" x2="1037.5" y2="139" stroke="#24354F" stroke-width="2"/>
+    </g>
+    <g>
+      <text x="716" y="183" font-size="19" font-weight="800" fill="#5CE8CF">L2</text>
+      <text x="756" y="183" font-size="18" fill="#C7D3E3">持续运营</text>
+      <rect x="850" y="167" width="250" height="12" rx="6" fill="#1B2B45"/>
+      <rect x="850" y="167" width="125" height="12" rx="6" fill="#5CE8CF"/>
+      <line x1="912.5" y1="163" x2="912.5" y2="183" stroke="#24354F" stroke-width="2"/>
+      <line x1="975" y1="163" x2="975" y2="183" stroke="#24354F" stroke-width="2"/>
+      <line x1="1037.5" y1="163" x2="1037.5" y2="183" stroke="#24354F" stroke-width="2"/>
+    </g>
+    <g>
+      <text x="716" y="227" font-size="19" font-weight="800" fill="#5CE8CF">L3</text>
+      <text x="756" y="227" font-size="18" fill="#C7D3E3">项目改进</text>
+      <rect x="850" y="211" width="250" height="12" rx="6" fill="#1B2B45"/>
+      <rect x="850" y="211" width="188" height="12" rx="6" fill="#5CE8CF"/>
+      <line x1="912.5" y1="207" x2="912.5" y2="227" stroke="#24354F" stroke-width="2"/>
+      <line x1="975" y1="207" x2="975" y2="227" stroke="#24354F" stroke-width="2"/>
+      <line x1="1037.5" y1="207" x2="1037.5" y2="227" stroke="#24354F" stroke-width="2"/>
+    </g>
+    <g>
+      <text x="716" y="271" font-size="19" font-weight="800" fill="#FFB454">L4</text>
+      <text x="756" y="271" font-size="18" fill="#C7D3E3">复杂编排</text>
+      <rect x="850" y="255" width="250" height="12" rx="6" fill="#1B2B45"/>
+      <rect x="850" y="255" width="250" height="12" rx="6" fill="#FFB454"/>
+    </g>
+    <text x="716" y="308" font-size="18" fill="#7286A0">强度由责任模式决定，不由代码行数决定</text>
+
+    <!-- 底部：执行策略与首个命令 -->
+    <g>
+      <rect x="72" y="398" width="18" height="6" rx="3" fill="#5CE8CF"/>
+      <rect x="96" y="398" width="18" height="6" rx="3" fill="#5CE8CF"/>
+      <rect x="120" y="398" width="18" height="6" rx="3" fill="#24354F"/>
+      <rect x="144" y="398" width="18" height="6" rx="3" fill="#24354F"/>
     </g>
 
-    <g transform="translate(76 400)" font-size="20" font-weight="650" letter-spacing="1">
-      <rect width="134" height="42" rx="8" fill="#65E6D1"/>
-      <text x="67" y="27" text-anchor="middle" fill="#09111F">AUTO</text>
-      <rect x="150" width="154" height="42" rx="8" fill="#101D30" stroke="#65E6D1"/>
-      <text x="227" y="27" text-anchor="middle" fill="#F6F8FB">CONFIRM</text>
-      <rect x="320" width="206" height="42" rx="8" fill="#101D30" stroke="#334155"/>
-      <text x="423" y="27" text-anchor="middle" fill="#9EACBF">MANUAL_ONLY</text>
-    </g>
+    <rect x="72" y="424" width="118" height="46" rx="10" fill="#5CE8CF"/>
+    <text x="131" y="453" text-anchor="middle" font-size="19" font-weight="800" fill="#062018">AUTO</text>
+    <rect x="202" y="424" width="150" height="46" rx="10" fill="none" stroke="#FFB454" stroke-width="2"/>
+    <text x="277" y="453" text-anchor="middle" font-size="19" font-weight="700" fill="#FFB454">CONFIRM</text>
+    <rect x="364" y="424" width="196" height="46" rx="10" fill="none" stroke="#3A4E6E" stroke-width="2"/>
+    <text x="462" y="453" text-anchor="middle" font-size="19" font-weight="700" fill="#9FB2C9">MANUAL_ONLY</text>
+
+    <text x="72" y="498" font-size="18" fill="#7286A0">普通进度不打断 · 高影响动作集中确认 · 公开交付回读验证</text>
+
+    <rect x="770" y="424" width="358" height="46" rx="10" fill="#06101E" stroke="#24354F" stroke-width="1.5"/>
+    <text x="786" y="453" font-family="'Cascadia Code','JetBrains Mono',Consolas,'SFMono-Regular',monospace" font-size="18"><tspan fill="#5CE8CF">$</tspan><tspan fill="#C7D3E3"> workflow.py init --level 1</tspan></text>
   </g>
 </svg>

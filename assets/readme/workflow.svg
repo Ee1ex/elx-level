@@ -1,48 +1,72 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 420" role="img" aria-labelledby="title desc">
-  <title id="title">ELX Level execution map</title>
-  <desc id="desc">Four project responsibility levels route through three execution modes into evidence, memory, and a GitHub delivery gate.</desc>
-  <rect width="1200" height="420" rx="10" fill="#09111F"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 430" role="img" aria-labelledby="wfTitle wfDesc">
+  <title id="wfTitle">ELX Level 工作原理</title>
+  <desc id="wfDesc">四步流程：责任决定深度，风险决定暂停点，证据形成记忆，公开交付单独确认。所有 LEVEL 共享同一套交付契约与安全边界。</desc>
 
   <defs>
-    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-      <path d="M0 0 L10 5 L0 10 Z" fill="#65E6D1"/>
+    <pattern id="dotsWf" width="28" height="28" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.2" fill="#16233B"/>
+    </pattern>
+    <marker id="arrowWf" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 Z" fill="#5CE8CF"/>
     </marker>
   </defs>
 
-  <g font-family="Inter, Segoe UI, system-ui, sans-serif">
-    <text x="64" y="82" fill="#F6F8FB" font-size="34" font-weight="700">One path. The right amount of process.</text>
+  <rect width="1200" height="430" rx="16" fill="#0A101C"/>
+  <rect width="1200" height="430" rx="16" fill="url(#dotsWf)" opacity="0.5"/>
 
-    <g transform="translate(64 142)">
-      <rect width="216" height="144" rx="10" fill="#101D30" stroke="#334155" stroke-width="2"/>
-      <text x="24" y="34" fill="#65E6D1" font-size="18" font-weight="650" letter-spacing="1">RESPONSIBILITY</text>
-      <text x="24" y="70" fill="#F6F8FB" font-size="24" font-weight="650">LEVEL 1–4</text>
-      <text x="24" y="102" fill="#9EACBF" font-size="20">Build · Operate</text>
-      <text x="24" y="128" fill="#9EACBF" font-size="20">Improve · Orchestrate</text>
-      <path d="M224 72 H286" fill="none" stroke="#65E6D1" stroke-width="2" marker-end="url(#arrow)"/>
+  <g font-family="'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei','Noto Sans SC',sans-serif">
+    <text x="78" y="74" font-size="16" font-weight="700" letter-spacing="3" fill="#5CE8CF">HOW IT WORKS</text>
+    <text x="78" y="118" font-size="30" font-weight="700" fill="#F2F6FC">一条路径，恰到好处的流程强度</text>
+    <text x="1122" y="118" text-anchor="end" font-size="18" fill="#7286A0">LEVEL → 执行 → 记忆 → 交付</text>
 
-      <g transform="translate(296)">
-        <rect width="224" height="144" rx="10" fill="#101D30" stroke="#65E6D1" stroke-width="2"/>
-        <text x="24" y="34" fill="#65E6D1" font-size="18" font-weight="650" letter-spacing="1">EXECUTION</text>
-        <text x="24" y="70" fill="#F6F8FB" font-size="22" font-weight="650">AUTO</text>
-        <text x="24" y="99" fill="#F6F8FB" font-size="22" font-weight="650">CONFIRM</text>
-        <text x="24" y="128" fill="#9EACBF" font-size="22" font-weight="650">MANUAL_ONLY</text>
-      </g>
-      <path d="M528 72 H590" fill="none" stroke="#65E6D1" stroke-width="2" marker-end="url(#arrow)"/>
-
-      <g transform="translate(600)">
-        <rect width="216" height="144" rx="10" fill="#101D30" stroke="#334155" stroke-width="2"/>
-        <text x="24" y="34" fill="#65E6D1" font-size="18" font-weight="650" letter-spacing="1">CONTINUITY</text>
-        <text x="24" y="74" fill="#F6F8FB" font-size="24" font-weight="650">Evidence</text>
-        <text x="24" y="110" fill="#F6F8FB" font-size="24" font-weight="650">&amp; Memory</text>
-      </g>
-      <path d="M824 72 H886" fill="none" stroke="#65E6D1" stroke-width="2" marker-end="url(#arrow)"/>
-
-      <g transform="translate(896)">
-        <rect width="176" height="144" rx="10" fill="#65E6D1"/>
-        <text x="24" y="34" fill="#09111F" font-size="18" font-weight="700" letter-spacing="1">DELIVERY</text>
-        <text x="24" y="76" fill="#09111F" font-size="24" font-weight="700">GitHub</text>
-        <text x="24" y="110" fill="#09111F" font-size="24" font-weight="700">Gate</text>
-      </g>
+    <!-- 01 责任决定深度 -->
+    <g>
+      <rect x="78" y="152" width="240" height="204" rx="14" fill="#0F1B2E" stroke="#24354F" stroke-width="1.5"/>
+      <text x="100" y="192" font-size="16" font-weight="800" fill="#5CE8CF">01</text>
+      <text x="100" y="228" font-size="21" font-weight="700" fill="#F2F6FC">责任决定深度</text>
+      <line x1="100" y1="246" x2="296" y2="246" stroke="#24354F" stroke-width="1.5"/>
+      <text x="100" y="278" font-size="18" fill="#9FB2C9">LEVEL 1–4 责任模式</text>
+      <text x="100" y="306" font-size="18" fill="#9FB2C9">快速开发到复杂编排</text>
+      <text x="100" y="334" font-size="18" fill="#7286A0">不看代码行数</text>
     </g>
+    <line x1="322" y1="254" x2="340" y2="254" stroke="#5CE8CF" stroke-width="2" marker-end="url(#arrowWf)"/>
+
+    <!-- 02 风险决定暂停点 -->
+    <g>
+      <rect x="346" y="152" width="240" height="204" rx="14" fill="#0F1B2E" stroke="#24354F" stroke-width="1.5"/>
+      <text x="368" y="192" font-size="16" font-weight="800" fill="#5CE8CF">02</text>
+      <text x="368" y="228" font-size="21" font-weight="700" fill="#F2F6FC">风险决定暂停点</text>
+      <line x1="368" y1="246" x2="564" y2="246" stroke="#24354F" stroke-width="1.5"/>
+      <text x="368" y="278" font-size="18" fill="#9FB2C9">AUTO · CONFIRM</text>
+      <text x="368" y="306" font-size="18" fill="#9FB2C9">MANUAL_ONLY</text>
+      <text x="368" y="334" font-size="18" fill="#7286A0">普通进度不打断</text>
+    </g>
+    <line x1="590" y1="254" x2="608" y2="254" stroke="#5CE8CF" stroke-width="2" marker-end="url(#arrowWf)"/>
+
+    <!-- 03 证据形成记忆 -->
+    <g>
+      <rect x="614" y="152" width="240" height="204" rx="14" fill="#0F1B2E" stroke="#24354F" stroke-width="1.5"/>
+      <text x="636" y="192" font-size="16" font-weight="800" fill="#5CE8CF">03</text>
+      <text x="636" y="228" font-size="21" font-weight="700" fill="#F2F6FC">证据形成记忆</text>
+      <line x1="636" y1="246" x2="832" y2="246" stroke="#24354F" stroke-width="1.5"/>
+      <text x="636" y="278" font-size="18" fill="#9FB2C9">稳定认知 + 演进记录</text>
+      <text x="636" y="306" font-size="18" fill="#9FB2C9">目标 · 架构 · 验证</text>
+      <text x="636" y="334" font-size="18" fill="#7286A0">跨会话可接管</text>
+    </g>
+    <line x1="858" y1="254" x2="876" y2="254" stroke="#5CE8CF" stroke-width="2" marker-end="url(#arrowWf)"/>
+
+    <!-- 04 交付单独确认 -->
+    <g>
+      <rect x="882" y="152" width="240" height="204" rx="14" fill="#0F1B2E" stroke="#5CE8CF" stroke-width="2"/>
+      <text x="904" y="192" font-size="16" font-weight="800" fill="#5CE8CF">04</text>
+      <text x="904" y="228" font-size="21" font-weight="700" fill="#F2F6FC">交付单独确认</text>
+      <line x1="904" y1="246" x2="1100" y2="246" stroke="#24354F" stroke-width="1.5"/>
+      <text x="904" y="278" font-size="18" fill="#9FB2C9">Push · PR · Merge</text>
+      <text x="904" y="306" font-size="18" fill="#9FB2C9">Tag 与 Release</text>
+      <text x="904" y="334" font-size="18" fill="#7286A0">执行前确认 · 后回读</text>
+    </g>
+
+    <text x="78" y="398" font-size="18" fill="#7286A0">所有 LEVEL 共享同一套交付契约与安全边界</text>
+    <text x="1122" y="398" text-anchor="end" font-family="'Cascadia Code','JetBrains Mono',Consolas,'SFMono-Regular',monospace" font-size="18" fill="#7286A0">.elx-level/state.json → docs/elx-level/STATUS.md</text>
   </g>
 </svg>

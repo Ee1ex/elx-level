@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 396" role="img" aria-labelledby="memTitle memDesc">
+  <title id="memTitle">ELX Level 双层项目记忆</title>
+  <desc id="memDesc">项目记忆分为两层：底部的稳定认知层回答项目现在是什么，上层的演进记录层回答为什么变成这样。两层共同保证换会话、换 Agent 后仍能从事实继续。</desc>
+
+  <defs>
+    <pattern id="dotsMem" width="28" height="28" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.2" fill="#16233B"/>
+    </pattern>
+    <marker id="arrowMem" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 Z" fill="#5CE8CF"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="396" rx="16" fill="#0A101C"/>
+  <rect width="1200" height="396" rx="16" fill="url(#dotsMem)" opacity="0.5"/>
+
+  <g font-family="'Segoe UI','PingFang SC','Hiragino Sans GB','Microsoft YaHei','Noto Sans SC',sans-serif">
+    <text x="72" y="60" font-size="15" font-weight="700" letter-spacing="3" fill="#5CE8CF">TWO-LAYER PROJECT MEMORY</text>
+    <text x="72" y="102" font-size="28" font-weight="700" fill="#F2F6FC">项目记忆 = 现在是什么 + 为什么变成这样</text>
+
+    <!-- 上层：演进记录层 -->
+    <g>
+      <rect x="72" y="136" width="600" height="100" rx="14" fill="#0F1B2E" stroke="#24354F" stroke-width="1.5"/>
+      <rect x="72" y="136" width="4" height="100" rx="2" fill="#FFB454"/>
+      <text x="96" y="170" font-size="20" font-weight="700" fill="#FFB454">演进记录层 · 为什么变成这样</text>
+      <text x="96" y="200" font-size="18" fill="#9FB2C9">Requirements · Decisions · Progress</text>
+      <text x="96" y="228" font-size="18" fill="#9FB2C9">Bug · CHANGELOG · Release Record · 待验证</text>
+    </g>
+
+    <!-- 下层：稳定认知层（地基） -->
+    <g>
+      <rect x="72" y="248" width="600" height="108" rx="14" fill="#0F1B2E" stroke="#24354F" stroke-width="1.5"/>
+      <rect x="72" y="248" width="4" height="108" rx="2" fill="#5CE8CF"/>
+      <text x="96" y="282" font-size="20" font-weight="700" fill="#5CE8CF">稳定认知层 · 项目现在是什么</text>
+      <text x="96" y="312" font-size="18" fill="#9FB2C9">目标 · 范围 · 架构 · 模块 · 调用 · 数据</text>
+      <text x="96" y="340" font-size="18" fill="#9FB2C9">依赖 · 构建 · 测试 · 交付 · 权限</text>
+    </g>
+
+    <line x1="678" y1="246" x2="706" y2="246" stroke="#5CE8CF" stroke-width="2" marker-end="url(#arrowMem)"/>
+
+    <!-- 右侧：接管结果 -->
+    <g>
+      <rect x="712" y="136" width="416" height="220" rx="14" fill="#101D30" stroke="#2A3B55" stroke-width="1.5"/>
+      <text x="740" y="174" font-size="20" font-weight="700" fill="#F2F6FC">跨会话接管</text>
+      <text x="740" y="204" font-size="18" fill="#9FB2C9">换 Agent、换主机、隔一周回来，</text>
+      <text x="740" y="230" font-size="18" fill="#9FB2C9">从事实继续，而不是从聊天记录猜。</text>
+      <rect x="740" y="252" width="360" height="36" rx="8" fill="#06101E" stroke="#24354F" stroke-width="1.5"/>
+      <text x="756" y="276" font-family="'Cascadia Code','JetBrains Mono',Consolas,'SFMono-Regular',monospace" font-size="18" fill="#7FD9C8">.elx-level/state.json</text>
+      <rect x="740" y="298" width="360" height="36" rx="8" fill="#06101E" stroke="#24354F" stroke-width="1.5"/>
+      <text x="756" y="322" font-family="'Cascadia Code','JetBrains Mono',Consolas,'SFMono-Regular',monospace" font-size="18" fill="#7FD9C8">docs/elx-level/STATUS.md</text>
+    </g>
+  </g>
+</svg>
