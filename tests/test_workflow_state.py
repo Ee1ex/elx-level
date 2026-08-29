@@ -9,6 +9,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 CLI = ROOT / "scripts" / "workflow.py"
+PUBLIC_VERSION = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
 
 
 def run_cli(*args):
@@ -66,7 +67,7 @@ class WorkflowStateTests(unittest.TestCase):
             }
             self.assertEqual(after, before)
             state = json.loads((current / "state.json").read_text(encoding="utf-8"))
-            self.assertEqual(state["workflow_version"], "2.0")
+            self.assertEqual(state["workflow_version"], PUBLIC_VERSION)
             self.assertTrue((project / "docs" / "elx-level" / "STATUS.md").is_file())
 
     def test_migrate_stops_when_legacy_and_current_state_both_exist(self):
@@ -218,13 +219,13 @@ class WorkflowStateTests(unittest.TestCase):
             backup = json.loads(
                 (project / ".elx-level" / "state.backup.json").read_text(encoding="utf-8")
             )
-            self.assertEqual(current["workflow_version"], "2.0")
+            self.assertEqual(current["workflow_version"], PUBLIC_VERSION)
             self.assertEqual(backup["workflow_version"], "0.3.0")
             event = next(
                 item for item in current["history"] if item.get("event") == "workflow_version_updated"
             )
             self.assertEqual(event["from_version"], "0.3.0")
-            self.assertEqual(event["to_version"], "2.0")
+            self.assertEqual(event["to_version"], PUBLIC_VERSION)
 
     def test_transition_requires_matching_gate_and_approval(self):
         with tempfile.TemporaryDirectory() as temp:
@@ -365,7 +366,7 @@ class WorkflowStateTests(unittest.TestCase):
             self.assertEqual(migrated.returncode, 0, migrated.stderr)
             current = json.loads(state_path.read_text(encoding="utf-8"))
             self.assertEqual(current["schema_version"], "2.0")
-            self.assertEqual(current["workflow_version"], "2.0")
+            self.assertEqual(current["workflow_version"], PUBLIC_VERSION)
             self.assertEqual(current["level"], 4)
             self.assertEqual(current["stage"], "requirements-analysis")
             self.assertEqual(current["gate"], "level4-execution-review")
@@ -391,7 +392,7 @@ class WorkflowStateTests(unittest.TestCase):
                 self.assertEqual(migrated.returncode, 0, migrated.stderr)
                 current = json.loads(state_path.read_text(encoding="utf-8"))
                 self.assertEqual(current["schema_version"], "2.0")
-                self.assertEqual(current["workflow_version"], "2.0")
+                self.assertEqual(current["workflow_version"], PUBLIC_VERSION)
                 self.assertEqual(current["level"], level)
                 self.assertIsNone(current["gate"])
                 self.assertEqual(current["status"], "in_progress")

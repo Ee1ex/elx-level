@@ -2,14 +2,7 @@
 
 本项目的所有重要变化都会记录在此文件中。
 
-## [2.0] - 2026-08-20
-
-- 产品与 Skill 正式更名为 ELX Level / `elx-level`，新安装目录统一使用 `elx-level`。
-- 新项目状态迁移到 `.elx-level` 与 `docs/elx-level`，旧 `.project-workflow` 通过显式命令一次性复制并保留为回滚来源。
-- 不提供长期可发现的旧 Skill 别名；`Project Level Workflow 1.0` 与 `v1.0` 保留为旧品牌最终稳定版本。
-- LEVEL 1–4、`AUTO` / `CONFIRM` / `MANUAL_ONLY`、Schema `2.0` 和 GitHub 远程确认边界保持不变。
-
-### 流程增补 - 2026-08-30
+## [2.1] - 2026-08-30
 
 - 新增 `workflow.py version-bump`（LEVEL 1/2）：自动探测版本源（`VERSION`/`package.json`/`pyproject.toml`/`Cargo.toml`），按版本 Tag 以来的提交分级（major/minor/patch），保持 X.Y 或 X.Y.Z 段数计算新版本；dry-run 展示计划，并入 GitHub 交付计划确认后 `--apply` 写回并创建 `chore(release): v<新版本>` 发布提交；目标项目已有 `CHANGELOG.md` 时自动插入版本条目；无版本文件时创建根 `VERSION` 初始 `0.1`；LEVEL 3 拒绝执行。
 - 规则文档见新增 `references/release-versioning.md`；Git 动作矩阵新增"版本更新与交付提交"一行；`release-record.md` 模板新增"版本来源与分级依据"字段。
@@ -21,6 +14,13 @@
 - LEVEL 1 Project Brief 定稿前 Agent 必须列出关键假设并逐项提问确认；「必做功能 + 范围冻结」明确为本级计划载体。
 - 三个 LEVEL 新增"回到受影响阶段"回环规则：需求或方案被推翻时回到对应阶段重新确认，不带着已证伪的方向继续实现。
 - 修复双语 README 契约：`README.en.md` 对齐重设计后的中文结构；安装脚本固定 UTF-8 输出编码，避免中文提示在重定向时乱码。
+
+## [2.0] - 2026-08-20
+
+- 产品与 Skill 正式更名为 ELX Level / `elx-level`，新安装目录统一使用 `elx-level`。
+- 新项目状态迁移到 `.elx-level` 与 `docs/elx-level`，旧 `.project-workflow` 通过显式命令一次性复制并保留为回滚来源。
+- 不提供长期可发现的旧 Skill 别名；`Project Level Workflow 1.0` 与 `v1.0` 保留为旧品牌最终稳定版本。
+- LEVEL 1–4、`AUTO` / `CONFIRM` / `MANUAL_ONLY`、Schema `2.0` 和 GitHub 远程确认边界保持不变。
 
 ## [1.0] - 2026-08-16
 

@@ -56,7 +56,7 @@ class InstallIntegrationTests(unittest.TestCase):
                 "templates/level1/project-brief.md",
             ):
                 self.assertTrue((installed / relative).is_file(), relative)
-            self.assertEqual((installed / "VERSION").read_text(encoding="utf-8").strip(), "2.0")
+            self.assertEqual((installed / "VERSION").read_text(encoding="utf-8").strip(), "2.1")
             self.assertFalse((skills / "project-level-workflow").exists())
             self.assertEqual(marker.read_text(encoding="utf-8"), "keep")
             self.assertIn("独立 project-vibe-spec", result.stdout)

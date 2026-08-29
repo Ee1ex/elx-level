@@ -120,10 +120,10 @@ class RepositoryContractTests(unittest.TestCase):
     def test_version_uses_two_numeric_segments(self):
         version = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
         self.assertRegex(version, re.compile(r"^\d+\.\d+$"))
-        self.assertEqual(version, "2.0")
+        self.assertEqual(version, "2.1")
 
-    def test_public_identity_is_elx_level_2_0(self):
-        self.assertEqual((ROOT / "VERSION").read_text(encoding="utf-8").strip(), "2.0")
+    def test_public_identity_is_elx_level_2_1(self):
+        self.assertEqual((ROOT / "VERSION").read_text(encoding="utf-8").strip(), "2.1")
         skill = (ROOT / "SKILL.md").read_text(encoding="utf-8")
         self.assertIn("name: elx-level", skill)
         self.assertIn("ELX Level", skill)

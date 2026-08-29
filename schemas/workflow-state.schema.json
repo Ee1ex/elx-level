@@ -24,7 +24,7 @@
   ],
   "properties": {
     "schema_version": {"const": "2.0"},
-    "workflow_version": {"const": "2.0"},
+    "workflow_version": {"const": "2.1"},
     "project_id": {"type": "string", "minLength": 1},
     "level": {"enum": [1, 2, 3, 4]},
     "stage": {"type": "string", "minLength": 1},

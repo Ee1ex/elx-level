@@ -54,7 +54,8 @@ class PackageValidationTests(unittest.TestCase):
             check=False,
         )
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertIn("包验证通过：elx-level 2.0", result.stdout)
+        version = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
+        self.assertIn(f"包验证通过：elx-level {version}", result.stdout)
 
     def test_version_is_consistent_across_public_contracts(self) -> None:
         version = (ROOT / "VERSION").read_text(encoding="utf-8").strip()

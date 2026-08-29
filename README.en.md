@@ -6,7 +6,7 @@
 
 <img src="assets/readme/hero.svg" alt="ELX Level: choose the right workflow depth and keep the full project memory. Four responsibility levels L1–L4 with AUTO / CONFIRM / MANUAL_ONLY execution modes" width="100%">
 
-![Version](https://img.shields.io/badge/version-2.0-5CE8CF?labelColor=0A101C&style=flat-square)
+![Version](https://img.shields.io/badge/version-2.1-5CE8CF?labelColor=0A101C&style=flat-square)
 ![LEVEL](https://img.shields.io/badge/LEVEL-1--4-23405F?labelColor=0A101C&style=flat-square)
 ![Python](https://img.shields.io/badge/Python-3.10%2B-23405F?labelColor=0A101C&style=flat-square)
 ![Platform](https://img.shields.io/badge/Platform-Codex%20%7C%20Claude%20Code%20%7C%20Cursor-23405F?labelColor=0A101C&style=flat-square)
@@ -115,7 +115,7 @@ Adapters reference only the current LEVEL, state, and layering strategy instead 
 - 🔢 LEVEL 1–4 from `0.4.0` keep their numeric meaning, while the old LEVEL 4 remains at its analysis boundary awaiting execution confirmation; older states migrate by protocol: old LEVEL 1 → new LEVEL 1, old LEVEL 2 → new LEVEL 3, and old LEVEL 3 → new LEVEL 4.
 - 💾 Before migrating, a `state.backup.json` is written and `STATUS.md` records the old/new level, schema, and reason.
 
-The current public version is `2.0`, with Git Tag target `v2.0`.
+The current public version is `2.1`, with Git Tag target `v2.1`.
 
 ## 🗂️ Repository Layout
 

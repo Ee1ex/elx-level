@@ -6,7 +6,7 @@
 
 <img src="assets/readme/hero.svg" alt="ELX Level：选择刚好的流程强度，保留完整项目记忆。四级责任档位 L1–L4，执行策略 AUTO / CONFIRM / MANUAL_ONLY" width="100%">
 
-![Version](https://img.shields.io/badge/version-2.0-5CE8CF?labelColor=0A101C&style=flat-square)
+![Version](https://img.shields.io/badge/version-2.1-5CE8CF?labelColor=0A101C&style=flat-square)
 ![LEVEL](https://img.shields.io/badge/LEVEL-1--4-23405F?labelColor=0A101C&style=flat-square)
 ![Python](https://img.shields.io/badge/Python-3.10%2B-23405F?labelColor=0A101C&style=flat-square)
 ![Platform](https://img.shields.io/badge/Platform-Codex%20%7C%20Claude%20Code%20%7C%20Cursor-23405F?labelColor=0A101C&style=flat-square)
@@ -115,7 +115,7 @@ LEVEL 1 同时建立两层记忆，但小功能、小修改只需要 Progress/Ch
 - 🔢 `0.4.0` 的 LEVEL 1–4 保持原数字，其中旧 LEVEL 4 仍停在分析边界并等待执行确认；更老状态按协议迁移：旧 LEVEL 1 → 新 LEVEL 1、旧 LEVEL 2 → 新 LEVEL 3、旧 LEVEL 3 → 新 LEVEL 4。
 - 💾 迁移前会写入 `state.backup.json`，并在 `STATUS.md` 记录旧/新版本、等级和原因。
 
-当前公共版本为 `2.0`，Git Tag 目标为 `v2.0`。
+当前公共版本为 `2.1`，Git Tag 目标为 `v2.1`。
 
 ## 🗂️ 仓库结构
 
