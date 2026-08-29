@@ -1019,7 +1019,8 @@ def evaluate_git_action(
         decision["allowed"] = not reasons
         return decision
 
-    if not (state.get("git") or {}).get("skill_created_branch"):
+    personal_level = state.get("level") in (1, 2)
+    if not personal_level and not (state.get("git") or {}).get("skill_created_branch"):
         reasons.append("当前分支不是本 Skill 创建或明确接管的分支。")
     if not git_info.get("branch"):
         reasons.append("无法识别当前分支。")
@@ -1078,6 +1079,61 @@ def command_git_policy(args: argparse.Namespace) -> int:
     decision = evaluate_git_action(args.action, state, git_info)
     print(json.dumps({"decision": decision, "git": git_info}, ensure_ascii=False, indent=2))
     return 0 if decision["allowed"] else 2
+
+
+def command_git_init(args: argparse.Namespace) -> int:
+    project = Path(args.project).expanduser().resolve()
+    if not project.is_dir():
+        print(f"项目目录不存在：{project}", file=sys.stderr)
+        return 1
+    git = shutil.which("git")
+    if not git:
+        print("未发现 Git 命令，无法初始化仓库。", file=sys.stderr)
+        return 1
+    if (project / ".git").exists():
+        print("当前目录已是 Git 仓库；未执行任何操作。", file=sys.stderr)
+        return 2
+    if not args.confirm:
+        print(
+            "Git 初始化是人工 Gate：取得用户确认后，使用 --confirm 重新执行。",
+            file=sys.stderr,
+        )
+        return 2
+    result = subprocess.run([git, "init"], cwd=project, capture_output=True, text=True)
+    if result.returncode != 0:
+        print(f"git init 失败：\n{(result.stderr or result.stdout).strip()}", file=sys.stderr)
+        return 1
+    state_path = project / STATE_DIR_NAME / "state.json"
+    if not state_path.is_file():
+        print(f"已初始化 Git 仓库（尚未运行 init，跳过基线提交）：{project}")
+        return 0
+    scaffold = [STATE_DIR_NAME, f"docs/{DOCS_DIR_NAME}"]
+    existing = [path for path in scaffold if Path(project / path).exists()]
+    add_result = subprocess.run(
+        [git, "add", "--", *existing], cwd=project, capture_output=True, text=True
+    )
+    if add_result.returncode != 0:
+        print(
+            "已初始化 Git 仓库，但暂存工作流基线失败：\n"
+            f"{(add_result.stderr or add_result.stdout).strip()}",
+            file=sys.stderr,
+        )
+        return 1
+    commit_result = subprocess.run(
+        [git, "commit", "-m", args.message, "--", *existing],
+        cwd=project,
+        capture_output=True,
+        text=True,
+    )
+    if commit_result.returncode != 0:
+        print(
+            "已初始化 Git 仓库，但基线提交失败：\n"
+            f"{(commit_result.stderr or commit_result.stdout).strip()}",
+            file=sys.stderr,
+        )
+        return 1
+    print(f"已初始化 Git 仓库并提交工作流基线：{project}")
+    return 0
 
 
 def _public_markdown_files(root: Path) -> list[Path]:
@@ -1377,6 +1433,18 @@ def build_parser() -> argparse.ArgumentParser:
     adapter_parser.add_argument("--platform", required=True, choices=("codex", "claude-code", "cursor"))
     adapter_parser.add_argument("--project", required=True)
     adapter_parser.set_defaults(handler=command_render_adapter)
+
+    git_init_parser = subparsers.add_parser(
+        "git-init", help="经用户确认后初始化 Git 仓库并提交工作流基线"
+    )
+    git_init_parser.add_argument("--project", required=True)
+    git_init_parser.add_argument(
+        "--confirm", action="store_true", help="显式携带用户确认；缺少时不执行"
+    )
+    git_init_parser.add_argument(
+        "--message", default="chore: initialize elx-level workflow state"
+    )
+    git_init_parser.set_defaults(handler=command_git_init)
 
     git_parser = subparsers.add_parser("git-policy", help="检查 Git 动作是否满足自动执行条件")
     git_parser.add_argument("--project", required=True)

@@ -69,6 +69,14 @@ python scripts/workflow.py init --project <项目根目录> --level <1|2|3|4>
 
 `init` 只写入 `.elx-level/state.json`、`state.backup.json` 和 `docs/elx-level/STATUS.md`，不未经确认生成大量项目文档。
 
+LEVEL 2 项目根目录还不是 Git 仓库时，先向用户说明并取得确认；确认后运行：
+
+```text
+python scripts/workflow.py git-init --project <项目根目录> --confirm
+```
+
+它执行 `git init` 并只暂存 `.elx-level/` 与 `docs/elx-level/` 创建基线提交；目录已是 Git 仓库时拒绝执行。LEVEL 1、3、4 不自动初始化 Git，需要时按 `references/git-and-draft-pr.md` 的人工 Gate 处理。
+
 - LEVEL 1：规则、文档地图、Project Brief、架构、Requirements/Decisions/Progress Ledger、轻量 Change Record、状态和待验证记录。
 - LEVEL 2：完整 PVS 的 AGENTS、DOCUMENT_MAP、PDD/PRD、Requirements、Decisions、Progress、业务流、UI、架构、API、数据、权限、部署、监控、备份、回滚、运营、Bug 和版本记录。
 - LEVEL 3：优先复用 Issue、PR、CHANGELOG、ADR 和仓库文档，只补项目地图、Change Record、受影响基线、回归、PR 和交接。
@@ -117,7 +125,7 @@ python scripts/workflow.py init --project <项目根目录> --level <1|2|3|4>
 
 读取相关实现、测试、配置和文档，建立修改前基线；一次完成一个最小可验证切片；运行必要检查；检查 Diff；同步稳定认知与演进记录。普通进度、测试通过、功能完成和本地提交不是 Gate。出现实质范围、方向、架构、数据、权限、安全、兼容、生产、公开发布、外部 Provider 或高影响 Git 变化时切换为 `CONFIRM` 或 `MANUAL_ONLY`。
 
-Git 默认不执行远程写入；`allow_push_own_branch=false`、`allow_create_draft_pr=false`，两个字段只保留范围配置。所有 LEVEL 的 push、Draft PR、Merge、Tag 和 Release 自动选择 Codex GitHub 插件，先形成合并计划并在执行前确认，完成后回读验证。Force Push 和改写公共历史永久禁止。Qima 只在能力缺口明确时提醒用户手动考虑，不得直接调用或自动串联。
+Git 默认不执行远程写入；`allow_push_own_branch=false`、`allow_create_draft_pr=false`，两个字段只保留范围配置。LEVEL 1/2 的每个切片在验证全部通过后必须创建只包含当前任务的本地提交（当前分支含默认分支均可），未验证不提交；LEVEL 3 沿用宿主仓库的提交规则。所有 LEVEL 的 push、Draft PR、Merge、Tag 和 Release 自动选择 Codex GitHub 插件，先形成合并计划并在执行前确认，完成后回读验证。Force Push 和改写公共历史永久禁止。Qima 只在能力缺口明确时提醒用户手动考虑，不得直接调用或自动串联。
 
 ## 平台适配
 
