@@ -20,6 +20,7 @@
 | 创建或更新 Draft PR | GitHub 插件确认路径 | push 条件成立、范围配置开启，再取得动作时确认 |
 | 写入默认分支的远程动作 | 禁止自动执行 | 改为功能分支与 PR 流程；LEVEL 1/2 的默认分支本地提交不受此条限制 |
 | 删除远端分支、转 Ready、Merge、Tag、Release | GitHub 插件确认路径 | 纳入合并后的远程计划，用户明确确认后由插件执行并回读 |
+| 版本更新与交付提交 | LEVEL 1/2 条件允许 | `version-bump` dry-run 展示分级依据与目标版本，并入交付计划经用户确认后 `--apply`；只提交版本文件与 `CHANGELOG.md`，见 `release-versioning.md` |
 | Force Push、改写公共历史 | 永久禁止 | Gate 不得覆盖 |
 
 ## LEVEL 1/2 切片提交纪律

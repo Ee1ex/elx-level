@@ -11,6 +11,9 @@
 
 ### 流程增补 - 2026-08-30
 
+- 新增 `workflow.py version-bump`（LEVEL 1/2）：自动探测版本源（`VERSION`/`package.json`/`pyproject.toml`/`Cargo.toml`），按版本 Tag 以来的提交分级（major/minor/patch），保持 X.Y 或 X.Y.Z 段数计算新版本；dry-run 展示计划，并入 GitHub 交付计划确认后 `--apply` 写回并创建 `chore(release): v<新版本>` 发布提交；目标项目已有 `CHANGELOG.md` 时自动插入版本条目；无版本文件时创建根 `VERSION` 初始 `0.1`；LEVEL 3 拒绝执行。
+- 规则文档见新增 `references/release-versioning.md`；Git 动作矩阵新增"版本更新与交付提交"一行；`release-record.md` 模板新增"版本来源与分级依据"字段。
+- 补齐过程文档：`docs/superpowers/plans/2026-08-30-flow-alignment.md`（回填本日流程对齐批次）与 `2026-08-30-release-versioning.md`（本功能执行计划）。
 - LEVEL 2 初始化时检测到非 Git 仓库，先取得用户确认，再由新增的 `workflow.py git-init --confirm` 执行 `git init` 并只提交 `.elx-level/` 与 `docs/elx-level/` 工作流基线。
 - LEVEL 1/2 每个切片验证全部通过后必须创建只包含当前任务的本地提交（当前分支含默认分支均可），未验证不提交；LEVEL 3 保持宿主仓库的分支与提交规则。
 - LEVEL 2 新增 G2 Demo/原型环节与 `templates/level2/demo.md`：跨模块新功能在 G1 需求确认后、G3 技术方案前先做可运行验证；Gate 编号理顺为 G0 立项、G1 需求、G2 原型、G3 技术、G4 任务、G5 验收、G6 发布。

@@ -125,7 +125,7 @@ python scripts/workflow.py git-init --project <项目根目录> --confirm
 
 读取相关实现、测试、配置和文档，建立修改前基线；一次完成一个最小可验证切片；运行必要检查；检查 Diff；同步稳定认知与演进记录。普通进度、测试通过、功能完成和本地提交不是 Gate。出现实质范围、方向、架构、数据、权限、安全、兼容、生产、公开发布、外部 Provider 或高影响 Git 变化时切换为 `CONFIRM` 或 `MANUAL_ONLY`。
 
-Git 默认不执行远程写入；`allow_push_own_branch=false`、`allow_create_draft_pr=false`，两个字段只保留范围配置。LEVEL 1/2 的每个切片在验证全部通过后必须创建只包含当前任务的本地提交（当前分支含默认分支均可），未验证不提交；LEVEL 3 沿用宿主仓库的提交规则。所有 LEVEL 的 push、Draft PR、Merge、Tag 和 Release 自动选择 Codex GitHub 插件，先形成合并计划并在执行前确认，完成后回读验证。Force Push 和改写公共历史永久禁止。Qima 只在能力缺口明确时提醒用户手动考虑，不得直接调用或自动串联。
+Git 默认不执行远程写入；`allow_push_own_branch=false`、`allow_create_draft_pr=false`，两个字段只保留范围配置。LEVEL 1/2 的每个切片在验证全部通过后必须创建只包含当前任务的本地提交（当前分支含默认分支均可），未验证不提交；LEVEL 3 沿用宿主仓库的提交规则。LEVEL 1/2 需要版本发布时，集中验收后运行 `workflow.py version-bump`（规则见 `references/release-versioning.md`）生成版本号演进与发布提交描述，计划并入 GitHub 交付计划一并确认后应用。所有 LEVEL 的 push、Draft PR、Merge、Tag 和 Release 自动选择 Codex GitHub 插件，先形成合并计划并在执行前确认，完成后回读验证。Force Push 和改写公共历史永久禁止。Qima 只在能力缺口明确时提醒用户手动考虑，不得直接调用或自动串联。
 
 ## 平台适配
 

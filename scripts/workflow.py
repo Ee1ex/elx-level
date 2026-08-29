@@ -1136,6 +1136,272 @@ def command_git_init(args: argparse.Namespace) -> int:
     return 0
 
 
+VERSION_SOURCE_ORDER = ("VERSION", "package.json", "pyproject.toml", "Cargo.toml")
+MAJOR_SUBJECT_PATTERN = re.compile(r"^[A-Za-z]+(\([^)]*\))?!\s*:")
+MINOR_SUBJECT_PATTERN = re.compile(r"^feat(\([^)]*\))?\s*:")
+PATCH_SUBJECT_PATTERN = re.compile(
+    r"^(fix|docs|chore|style|refactor|perf|test|build|ci)(\([^)]*\))?\s*:"
+)
+BREAKING_CHANGE_PATTERN = re.compile(r"BREAKING\s*CHANGE", re.IGNORECASE)
+
+
+def detect_version_source(project: Path) -> dict[str, Any] | None:
+    version_file = project / "VERSION"
+    if version_file.is_file():
+        text = version_file.read_text(encoding="utf-8").strip()
+        if text:
+            return {"path": version_file, "kind": "version_file", "version": text}
+    package_json = project / "package.json"
+    if package_json.is_file():
+        try:
+            data = json.loads(package_json.read_text(encoding="utf-8"))
+        except ValueError:
+            data = {}
+        version = str(data.get("version") or "").strip()
+        if version:
+            return {"path": package_json, "kind": "package_json", "version": version}
+    for name in ("pyproject.toml", "Cargo.toml"):
+        path = project / name
+        if not path.is_file():
+            continue
+        match = re.search(
+            r'(?m)^version\s*=\s*["\']([^"\']+)["\']',
+            path.read_text(encoding="utf-8"),
+        )
+        if match:
+            return {"path": path, "kind": name, "version": match.group(1).strip()}
+    return None
+
+
+def classify_commit_subjects(subjects: list[str]) -> dict[str, list[str]]:
+    groups: dict[str, list[str]] = {"major": [], "minor": [], "patch": [], "unknown": []}
+    for subject in subjects:
+        if MAJOR_SUBJECT_PATTERN.match(subject) or BREAKING_CHANGE_PATTERN.search(subject):
+            groups["major"].append(subject)
+        elif MINOR_SUBJECT_PATTERN.match(subject):
+            groups["minor"].append(subject)
+        elif PATCH_SUBJECT_PATTERN.match(subject):
+            groups["patch"].append(subject)
+        else:
+            groups["unknown"].append(subject)
+    return groups
+
+
+def highest_change_level(groups: dict[str, list[str]]) -> str:
+    if groups["major"]:
+        return "major"
+    if groups["minor"]:
+        return "minor"
+    return "patch"
+
+
+def commits_since_version_tag(project: Path, version: str) -> tuple[list[str], str | None]:
+    git = shutil.which("git")
+    if not git:
+        raise ValueError("未发现 Git 命令，无法分析提交历史。")
+    tag = None
+    for candidate in (f"v{version}", version):
+        probe = subprocess.run(
+            [git, "rev-parse", "-q", "--verify", f"refs/tags/{candidate}"],
+            cwd=project,
+            capture_output=True,
+            text=True,
+        )
+        if probe.returncode == 0:
+            tag = candidate
+            break
+    arguments = ["log", "--pretty=%s"]
+    if tag:
+        arguments.append(f"{tag}..HEAD")
+    result = subprocess.run([git, *arguments], cwd=project, capture_output=True, text=True)
+    if result.returncode != 0:
+        return [], tag
+    subjects = [line.strip() for line in result.stdout.splitlines() if line.strip()]
+    return subjects, tag
+
+
+def compute_next_version(current: str, level: str) -> str:
+    main, separator, suffix = current.partition("-")
+    parts = main.split(".")
+    if len(parts) > 3:
+        raise ValueError(f"不支持的版本号格式：{current}")
+    try:
+        numbers = [int(part) for part in parts]
+    except ValueError as exc:
+        raise ValueError(f"无法解析版本号：{current}") from exc
+    if len(numbers) == 3:
+        if level == "major":
+            numbers = [numbers[0] + 1, 0, 0]
+        elif level == "minor":
+            numbers = [numbers[0], numbers[1] + 1, 0]
+        else:
+            numbers = [numbers[0], numbers[1], numbers[2] + 1]
+        next_main = ".".join(str(number) for number in numbers)
+    else:
+        while len(numbers) < 2:
+            numbers.append(0)
+        if level == "major":
+            next_main = f"{numbers[0] + 1}.0"
+        else:
+            next_main = f"{numbers[0]}.{numbers[1] + 1}"
+    return f"{next_main}{separator}{suffix}" if separator else next_main
+
+
+def write_version_to_source(source: dict[str, Any], new_version: str) -> None:
+    path: Path = source["path"]
+    old_version: str = source["version"]
+    if source["kind"] == "version_file":
+        path.write_text(new_version + "\n", encoding="utf-8")
+        return
+    text = path.read_text(encoding="utf-8")
+    for quote in ('"', "'"):
+        replaced = text.replace(
+            f"{quote}{old_version}{quote}", f"{quote}{new_version}{quote}", 1
+        )
+        if replaced != text:
+            path.write_text(replaced, encoding="utf-8")
+            return
+    raise ValueError(f"无法在 {path.name} 中定位版本号 {old_version}。")
+
+
+def update_project_changelog(
+    changelog: Path, new_version: str, groups: dict[str, list[str]]
+) -> None:
+    today = datetime.now(timezone.utc).date().isoformat()
+    bullets: list[str] = []
+    for group_name in ("minor", "major", "patch", "unknown"):
+        for subject in groups[group_name]:
+            bullets.append(f"- {subject}")
+    if not bullets:
+        bullets.append("- 本次无按前缀分类的提交。")
+    block = f"## [{new_version}] - {today}\n\n" + "\n".join(bullets) + "\n\n"
+    text = changelog.read_text(encoding="utf-8")
+    head, separator, rest = text.partition("\n## ")
+    if separator:
+        new_text = head.rstrip("\n") + "\n\n" + block + "## " + rest
+    elif text.startswith("#"):
+        first_line, _, remainder = text.partition("\n")
+        new_text = first_line + "\n\n" + block + remainder.lstrip("\n")
+    else:
+        new_text = block + text
+    changelog.write_text(new_text, encoding="utf-8")
+
+
+def command_version_bump(args: argparse.Namespace) -> int:
+    project = Path(args.project).expanduser().resolve()
+    if not project.is_dir():
+        print(f"项目目录不存在：{project}", file=sys.stderr)
+        return 1
+    try:
+        state_path, _, _ = _require_current_state_paths(project)
+        state = _load_json(state_path)
+        errors = validate_state(state, project)
+        if errors:
+            raise ValueError("；".join(errors))
+    except ValueError as exc:
+        print(f"状态无效：{exc}", file=sys.stderr)
+        return 1
+    if state.get("level") not in (1, 2):
+        print(
+            "version-bump 仅支持 LEVEL 1/2 项目；LEVEL 3 的版本号由宿主仓库维护者管理。",
+            file=sys.stderr,
+        )
+        return 2
+    git = shutil.which("git")
+    if not git:
+        print("未发现 Git 命令，无法分析提交历史。", file=sys.stderr)
+        return 1
+    git_info = inspect_git(project)
+    if not git_info.get("repository"):
+        print("当前目录不是 Git 仓库；版本演进依赖提交历史。", file=sys.stderr)
+        return 2
+
+    source = detect_version_source(project)
+    creating = source is None
+    current_version = source["version"] if source else "0.1"
+    groups: dict[str, list[str]] = {"major": [], "minor": [], "patch": [], "unknown": []}
+    tag = None
+    forced_reason = None
+    if state.get("risk") in {"R3", "R4"}:
+        forced_reason = "当前任务风险为 R3/R4，按破坏性变更处理"
+    if creating:
+        planned_version = "0.1"
+    else:
+        subjects, tag = commits_since_version_tag(project, current_version)
+        groups = classify_commit_subjects(subjects)
+        change_level = highest_change_level(groups)
+        if forced_reason:
+            change_level = "major"
+        planned_version = compute_next_version(current_version, change_level)
+
+    if not args.apply:
+        plan = {
+            "mode": "dry-run",
+            "level": state.get("level"),
+            "version_source": None if creating else {"file": source["path"].name, "kind": source["kind"]},
+            "current_version": None if creating else current_version,
+            "create_version_file": creating,
+            "change_level": "major" if forced_reason else (None if creating else highest_change_level(groups)),
+            "forced_reason": forced_reason,
+            "since_tag": None if creating else tag,
+            "commits": {} if creating else groups,
+            "new_version": planned_version,
+            "changelog_will_update": (project / "CHANGELOG.md").is_file(),
+            "commit_subject": f"chore(release): v{planned_version}",
+        }
+        print(json.dumps(plan, ensure_ascii=False, indent=2))
+        return 0
+
+    if not _verifications_passed(state):
+        print("尚无完整通过的验证证据；未验证不发布。", file=sys.stderr)
+        return 2
+    if creating:
+        version_path = project / "VERSION"
+        version_path.write_text(planned_version + "\n", encoding="utf-8")
+        source = {"path": version_path, "kind": "version_file", "version": planned_version}
+    else:
+        try:
+            write_version_to_source(source, planned_version)
+        except ValueError as exc:
+            print(str(exc), file=sys.stderr)
+            return 1
+    staged = [source["path"].relative_to(project).as_posix()]
+    changelog = project / "CHANGELOG.md"
+    if changelog.is_file():
+        update_project_changelog(changelog, planned_version, groups)
+        staged.append("CHANGELOG.md")
+    add_result = subprocess.run(
+        [git, "add", "--", *staged], cwd=project, capture_output=True, text=True
+    )
+    if add_result.returncode != 0:
+        print(
+            "暂存版本文件失败：\n" + (add_result.stderr or add_result.stdout).strip(),
+            file=sys.stderr,
+        )
+        return 1
+    subject = args.message or f"chore(release): v{planned_version}"
+    body_lines = [
+        f"{group_name}: {item}"
+        for group_name in ("minor", "major", "patch", "unknown")
+        for item in (groups.get(group_name) or [])
+    ]
+    commit_arguments = [git, "commit", "-m", subject]
+    if body_lines:
+        commit_arguments += ["-m", "\n".join(body_lines[:20])]
+    commit_result = subprocess.run(
+        commit_arguments, cwd=project, capture_output=True, text=True
+    )
+    if commit_result.returncode != 0:
+        print(
+            "发布提交失败：\n" + (commit_result.stderr or commit_result.stdout).strip(),
+            file=sys.stderr,
+        )
+        return 1
+    previous = "(新建)" if creating else current_version
+    print(f"已更新版本 {previous} → {planned_version}，并创建发布提交。")
+    return 0
+
+
 def _public_markdown_files(root: Path) -> list[Path]:
     paths: list[Path] = []
     for path in root.rglob("*.md"):
@@ -1445,6 +1711,16 @@ def build_parser() -> argparse.ArgumentParser:
         "--message", default="chore: initialize elx-level workflow state"
     )
     git_init_parser.set_defaults(handler=command_git_init)
+
+    version_parser = subparsers.add_parser(
+        "version-bump", help="按改动分级计算并更新项目版本号（默认 dry-run）"
+    )
+    version_parser.add_argument("--project", required=True)
+    version_parser.add_argument(
+        "--apply", action="store_true", help="应用版本更新并创建发布提交；缺省只展示计划"
+    )
+    version_parser.add_argument("--message", help="覆盖默认发布提交主题 chore(release): v<版本>")
+    version_parser.set_defaults(handler=command_version_bump)
 
     git_parser = subparsers.add_parser("git-policy", help="检查 Git 动作是否满足自动执行条件")
     git_parser.add_argument("--project", required=True)
