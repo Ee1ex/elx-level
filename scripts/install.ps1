@@ -18,6 +18,10 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
+# 重定向输出时 PowerShell 5.1 使用系统代码页编码；固定为 UTF-8，
+# 保证中文提示在被 Agent 或 CI 捕获时不乱码。
+try { [Console]::OutputEncoding = [System.Text.Encoding]::UTF8 } catch { }
+
 # 公共包版本必须使用两段版本（X.X）；validate-package 负责拒绝三段版本。
 # references/ 会携带 documentation-contract.md、personal-execution-loop.md、
 # level4-capability-routing.md、github-plugin-routing.md；templates/ 会携带

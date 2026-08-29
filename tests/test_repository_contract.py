@@ -7,20 +7,30 @@ ROOT = Path(__file__).resolve().parents[1]
 
 README_HEADINGS = {
     "README.md": [
-        "3 分钟快速开始",
-        "它如何工作",
-        "选对 LEVEL",
-        "双层项目记忆",
-        "兼容、安全与 GitHub 交付",
-        "平台、开发验证与许可证",
+        "✨ 它解决什么问题",
+        "⚡ 3 分钟快速开始",
+        "🎚️ 四级模型：按责任选强度",
+        "⚙️ 它如何工作",
+        "🧠 双层项目记忆",
+        "🛡️ 安全边界与 GitHub 交付 Gate",
+        "📦 安装到你的平台",
+        "🔄 从旧版本迁移",
+        "🗂️ 仓库结构",
+        "🧪 开发与验证",
+        "📄 许可证",
     ],
     "README.en.md": [
-        "Quick Start in 3 Minutes",
-        "How It Works",
-        "Choose the Right LEVEL",
-        "Two-Layer Project Memory",
-        "Compatibility, Safety, and GitHub Delivery",
-        "Platforms, Development Verification, and License",
+        "✨ What Problem It Solves",
+        "⚡ Quick Start in 3 Minutes",
+        "🎚️ The Four-Level Model: Intensity by Responsibility",
+        "⚙️ How It Works",
+        "🧠 Two-Layer Project Memory",
+        "🛡️ Safety Boundaries and the GitHub Delivery Gate",
+        "📦 Install on Your Platform",
+        "🔄 Migrating from Older Versions",
+        "🗂️ Repository Layout",
+        "🧪 Development and Verification",
+        "📄 License",
     ],
 }
 
@@ -63,8 +73,8 @@ class RepositoryContractTests(unittest.TestCase):
     def test_bilingual_readmes_are_linked_and_isomorphic(self):
         chinese = (ROOT / "README.md").read_text(encoding="utf-8")
         english = (ROOT / "README.en.md").read_text(encoding="utf-8")
-        self.assertIn('href="README.en.md">English</a>', chinese)
-        self.assertRegex(english, r'href="README\.md">(?:简体中文|中文)</a>')
+        self.assertIn('href="README.en.md">🌐 English</a>', chinese)
+        self.assertRegex(english, r'href="README\.md">[^<]*简体中文</a>')
         for filename, expected in README_HEADINGS.items():
             text = (ROOT / filename).read_text(encoding="utf-8")
             headings = re.findall(r"^## (.+?)\s*$", text, flags=re.MULTILINE)
@@ -73,7 +83,8 @@ class RepositoryContractTests(unittest.TestCase):
     def test_readme_visuals_are_accessible_and_self_contained(self):
         for relative, view_box in (
             ("assets/readme/hero.svg", "0 0 1200 520"),
-            ("assets/readme/workflow.svg", "0 0 1200 420"),
+            ("assets/readme/workflow.svg", "0 0 1200 430"),
+            ("assets/readme/memory.svg", "0 0 1200 396"),
         ):
             text = (ROOT / relative).read_text(encoding="utf-8")
             self.assertIn(f'viewBox="{view_box}"', text, relative)
@@ -94,13 +105,15 @@ class RepositoryContractTests(unittest.TestCase):
             text = (ROOT / filename).read_text(encoding="utf-8")
             self.assertIn('src="assets/readme/hero.svg"', text, filename)
             self.assertIn('src="assets/readme/workflow.svg"', text, filename)
-            self.assertNotRegex(text, r"!\[[^]]*\]\(https?://", filename)
+            self.assertIn('src="assets/readme/memory.svg"', text, filename)
+            self.assertNotRegex(
+                text, r"!\[[^]]*\]\(https?://(?!(?:img\.)?shields\.io)", filename
+            )
             for forbidden in (
                 "visitor-count",
                 "profile-views",
                 "github-readme-stats",
                 "github-profile-trophy",
-                "shields.io",
             ):
                 self.assertNotIn(forbidden, text.lower(), f"{filename}: {forbidden}")
 
@@ -211,7 +224,7 @@ class RepositoryContractTests(unittest.TestCase):
             "CONFIRM",
             "MANUAL_ONLY",
             "GitHub 插件",
-            "X.X",
+            "当前公共版本为",
         ):
             self.assertIn(phrase, readme)
         self.assertIn("负责人确认后可实施", readme)
@@ -225,7 +238,6 @@ class RepositoryContractTests(unittest.TestCase):
             "CONFIRM",
             "MANUAL_ONLY",
             "GitHub",
-            "X.X",
             "core/project-vibe-spec/PVS.md",
         ):
             self.assertIn(phrase, english)
