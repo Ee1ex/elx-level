@@ -10,6 +10,7 @@
     {"name": "bug_tracker", "levels": [2], "default": "core/project-vibe-spec/assets/governance-starter/docs/BUG_TRACKER.md.template", "compatibility": []},
     {"name": "pdd", "levels": [2], "default": "core/project-vibe-spec/assets/governance-starter/docs/PDD.md.template", "compatibility": []},
     {"name": "prd", "levels": [2], "default": "core/project-vibe-spec/assets/governance-starter/docs/PRD.md.template", "compatibility": ["templates/level2/prd.md", "templates/level2/tech-spec.md"]},
+    {"name": "prototype_demo", "levels": [2], "default": "templates/level2/demo.md", "compatibility": []},
     {"name": "ui_guide", "levels": [2], "default": "core/project-vibe-spec/assets/governance-starter/docs/UI_GUIDE.md.template", "compatibility": []},
     {"name": "business_flow", "levels": [2], "default": "core/project-vibe-spec/assets/governance-starter/docs/BUSINESS_FLOW.md.template", "compatibility": []},
     {"name": "project_progress", "levels": [2], "default": "core/project-vibe-spec/assets/governance-starter/docs/PROGRESS.md.template", "compatibility": []},

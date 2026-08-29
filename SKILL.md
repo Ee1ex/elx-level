@@ -107,7 +107,7 @@ python scripts/workflow.py git-init --project <项目根目录> --confirm
 
 ### LEVEL 2：完整 PVS 持续运营
 
-读取 `core/project-vibe-spec/PVS.md` 全部流程及其两份 reference，使用 Phase 0 → Phase N、范围冻结和 DoD 推进。普通 Phase 完成后自动继续，不形成用户 Gate；方向、架构、数据、权限、安全、兼容、生产和 Release 变化时切换为 `CONFIRM`。
+读取 `core/project-vibe-spec/PVS.md` 全部流程及其两份 reference，使用 Phase 0 → Phase N、范围冻结和 DoD 推进。跨模块新功能在需求确认后、技术方案前，用 `templates/level2/demo.md` 完成 Demo/原型验证（G2）。普通 Phase 完成后自动继续，不形成用户 Gate；方向、架构、数据、权限、安全、兼容、生产和 Release 变化时切换为 `CONFIRM`。
 
 ### LEVEL 3：已有与开源项目改进
 
@@ -115,7 +115,7 @@ python scripts/workflow.py git-init --project <项目根目录> --confirm
 
 ### LEVEL 4：复杂自动化参考与路由
 
-按 Bridge 先完成需求、范围、MVP、方案和风险分析；负责人通过 `level4-execution-review` 后可实施。需求、原型、技术方案、任务拆解、实现、测试、Review、部署准备、日志和复盘所需专业 Skill 只路由、不得内嵌；缺失时说明来源、用途、权限和降级方案，安装前提醒用户确认。
+按 Bridge 先完成需求、范围、MVP、方案和风险分析；负责人通过 `level4-execution-review` 后可实施，先完成节点 0 环境搭建（Git 仓库与 `AGENTS.md`）再进入后续节点。需求、原型、技术方案、任务拆解、实现、测试、Review、部署准备、日志和复盘所需专业 Skill 只路由、不得内嵌；缺失时说明来源、用途、权限和降级方案，安装前提醒用户确认。
 
 ## 状态迁移
 

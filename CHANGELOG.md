@@ -9,6 +9,16 @@
 - 不提供长期可发现的旧 Skill 别名；`Project Level Workflow 1.0` 与 `v1.0` 保留为旧品牌最终稳定版本。
 - LEVEL 1–4、`AUTO` / `CONFIRM` / `MANUAL_ONLY`、Schema `2.0` 和 GitHub 远程确认边界保持不变。
 
+### 流程增补 - 2026-08-30
+
+- LEVEL 2 初始化时检测到非 Git 仓库，先取得用户确认，再由新增的 `workflow.py git-init --confirm` 执行 `git init` 并只提交 `.elx-level/` 与 `docs/elx-level/` 工作流基线。
+- LEVEL 1/2 每个切片验证全部通过后必须创建只包含当前任务的本地提交（当前分支含默认分支均可），未验证不提交；LEVEL 3 保持宿主仓库的分支与提交规则。
+- LEVEL 2 新增 G2 Demo/原型环节与 `templates/level2/demo.md`：跨模块新功能在 G1 需求确认后、G3 技术方案前先做可运行验证；Gate 编号理顺为 G0 立项、G1 需求、G2 原型、G3 技术、G4 任务、G5 验收、G6 发布。
+- LEVEL 4 新增节点 0 环境搭建（Git 仓库 + `AGENTS.md`），负责人确认实施后、进入后续节点前执行。
+- LEVEL 1 Project Brief 定稿前 Agent 必须列出关键假设并逐项提问确认；「必做功能 + 范围冻结」明确为本级计划载体。
+- 三个 LEVEL 新增"回到受影响阶段"回环规则：需求或方案被推翻时回到对应阶段重新确认，不带着已证伪的方向继续实现。
+- 修复双语 README 契约：`README.en.md` 对齐重设计后的中文结构；安装脚本固定 UTF-8 输出编码，避免中文提示在重定向时乱码。
+
 ## [1.0] - 2026-08-16
 
 - 公共版本改为两段式 `1.0`，状态 Schema 升级为 `2.0`，并兼容迁移 `0.4.0` 三段版本状态。

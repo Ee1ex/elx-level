@@ -23,6 +23,7 @@ TEMPLATES = [
     "templates/level2/pending-verification.md",
     "templates/level2/idea-review.md",
     "templates/level2/prd.md",
+    "templates/level2/demo.md",
     "templates/level2/tech-spec.md",
     "templates/level2/task.md",
     "templates/level2/deploy-readiness.md",
@@ -52,6 +53,7 @@ class TemplateTests(unittest.TestCase):
         required_sections = {
             "templates/level1/project-brief.md": ["目标用户", "核心路径", "本次不做", "验收标准"],
             "templates/level2/requirements.md": ["目标用户", "范围", "验收标准", "待确认"],
+            "templates/level2/demo.md": ["假设", "不做", "验证", "结论"],
             "templates/level2/operations-readiness.md": ["备份", "回滚", "监控", "运营责任"],
             "templates/level3/change-proposal.md": ["当前行为", "期望行为", "影响范围", "回归范围"],
             "templates/level3/regression-report.md": ["基线", "失败复现", "受影响回归", "Review"],
