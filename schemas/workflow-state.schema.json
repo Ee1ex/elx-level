@@ -23,31 +23,122 @@
     "updated_at"
   ],
   "properties": {
-    "schema_version": {"const": "2.0"},
-    "workflow_version": {"const": "2.1"},
-    "project_id": {"type": "string", "minLength": 1},
-    "level": {"enum": [1, 2, 3, 4]},
-    "stage": {"type": "string", "minLength": 1},
-    "gate": {"type": ["string", "null"]},
-    "status": {"enum": ["in_progress", "waiting_approval", "completed", "blocked"]},
-    "risk": {"enum": ["R1", "R2", "R3", "R4"]},
-    "execution_policy": {"enum": ["AUTO", "CONFIRM", "MANUAL_ONLY"]},
+    "schema_version": {
+      "const": "2.0"
+    },
+    "workflow_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+(\\.\\d+)?$",
+      "description": "Historical versions are readable; the CLI rejects future versions."
+    },
+    "project_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "level": {
+      "enum": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    "stage": {
+      "type": "string",
+      "minLength": 1
+    },
+    "gate": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "status": {
+      "enum": [
+        "in_progress",
+        "waiting_approval",
+        "completed",
+        "blocked"
+      ]
+    },
+    "risk": {
+      "enum": [
+        "R1",
+        "R2",
+        "R3",
+        "R4"
+      ]
+    },
+    "execution_policy": {
+      "enum": [
+        "AUTO",
+        "CONFIRM",
+        "MANUAL_ONLY"
+      ]
+    },
     "permissions": {
       "type": "object",
-      "required": ["allow_push_own_branch", "allow_create_draft_pr"],
+      "required": [
+        "allow_push_own_branch",
+        "allow_create_draft_pr"
+      ],
       "properties": {
-        "allow_push_own_branch": {"type": "boolean", "default": false},
-        "allow_create_draft_pr": {"type": "boolean", "default": false}
+        "allow_push_own_branch": {
+          "type": "boolean",
+          "default": false
+        },
+        "allow_create_draft_pr": {
+          "type": "boolean",
+          "default": false
+        }
       },
       "additionalProperties": false
     },
-    "current_task": {"type": ["object", "null"]},
-    "artifacts": {"type": "array"},
-    "verifications": {"type": "array"},
-    "git": {"type": "object"},
-    "remote": {"type": "object"},
-    "history": {"type": "array"},
-    "updated_at": {"type": "string", "format": "date-time"}
+    "current_task": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "title": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "paths": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "artifacts": {
+      "type": "array"
+    },
+    "verifications": {
+      "type": "array"
+    },
+    "git": {
+      "type": "object"
+    },
+    "remote": {
+      "type": "object"
+    },
+    "history": {
+      "type": "array"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    }
   },
-  "additionalProperties": false
+  "additionalProperties": false,
+  "x-current-workflow-version": "2.1"
 }

@@ -69,7 +69,7 @@ class PackageValidationTests(unittest.TestCase):
             schema["properties"]["execution_policy"]["enum"],
             ["AUTO", "CONFIRM", "MANUAL_ONLY"],
         )
-        self.assertEqual(schema["properties"]["workflow_version"]["const"], version)
+        self.assertEqual(schema["x-current-workflow-version"], version)
         self.assertEqual(evals["version"], version)
         self.assertIn(f"## [{version}]", changelog)
 
@@ -124,7 +124,7 @@ class PackageValidationTests(unittest.TestCase):
             errors = workflow.validate_package(package)
         self.assertIn("github-plugin-routing.md", " ".join(errors))
 
-    def test_release_readiness_record_is_required(self) -> None:
+    def test_historical_readiness_is_not_a_runtime_dependency(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             package = Path(directory) / "package"
             shutil.copytree(ROOT, package)
@@ -132,7 +132,7 @@ class PackageValidationTests(unittest.TestCase):
             if readiness.exists():
                 readiness.unlink()
             errors = workflow.validate_package(package)
-        self.assertIn("2.0-readiness.md", " ".join(errors))
+        self.assertEqual(errors, [])
 
 
 if __name__ == "__main__":

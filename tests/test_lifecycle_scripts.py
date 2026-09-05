@@ -50,7 +50,8 @@ class LifecycleScriptTests(unittest.TestCase):
     def test_installers_include_only_the_unified_level_document(self) -> None:
         for name in ("install.ps1", "install.sh"):
             content = self._read(name)
-            self.assertIn("LEVEL.md", content)
+            self.assertIn("package-files.json", content)
+            self.assertIn("LEVEL.md", (ROOT / "package-files.json").read_text())
             self.assertNotIn("LEVEL1-", content)
             self.assertNotIn("LEVEL2-", content)
             self.assertNotIn("LEVEL3-", content)
@@ -60,8 +61,10 @@ class LifecycleScriptTests(unittest.TestCase):
         for name in ("install.ps1", "install.sh"):
             with self.subTest(script=name):
                 content = self._read(name)
-                self.assertIn("README.en.md", content)
-                self.assertIn("assets", content)
+                self.assertIn("package-files.json", content)
+                manifest = (ROOT / "package-files.json").read_text()
+                self.assertIn("README.en.md", manifest)
+                self.assertIn("assets", manifest)
 
     def test_update_runs_doctor_and_state_migration_before_replacement(self) -> None:
         for name in ("update.ps1", "update.sh"):

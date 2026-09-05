@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 import re
 import shutil
 import subprocess
@@ -206,15 +207,68 @@ def _is_absolute_file_path(value: str) -> bool:
     return PureWindowsPath(value).is_absolute() or PurePosixPath(value).is_absolute()
 
 
+def _schema_errors(value: Any, rule: dict[str, Any], path: str = "state") -> list[str]:
+    errors = []
+    expected = rule.get("type")
+    types = {"object": lambda x: isinstance(x, dict), "array": lambda x: isinstance(x, list),
+             "string": lambda x: isinstance(x, str), "boolean": lambda x: type(x) is bool,
+             "null": lambda x: x is None, "integer": lambda x: type(x) is int}
+    if expected and not any(types[kind](value) for kind in ([expected] if isinstance(expected, str) else expected)):
+        return [f"{path} 类型不符合 Schema"]
+    if "const" in rule and value != rule["const"]:
+        errors.append(f"{path} 不符合 Schema 固定值")
+    if "enum" in rule and not any(type(value) is type(item) and value == item for item in rule["enum"]):
+        errors.append(f"{path} 不在 Schema 枚举中")
+    if isinstance(value, str):
+        if len(value) < rule.get("minLength", 0) or (rule.get("pattern") and not re.search(rule["pattern"], value)):
+            errors.append(f"{path} 格式不符合 Schema")
+        if rule.get("format") == "date-time" and not _valid_timestamp(value):
+            errors.append(f"{path} 必须是带时区时间")
+    if isinstance(value, dict):
+        properties = rule.get("properties", {})
+        for key in rule.get("required", []):
+            if key not in value:
+                errors.append(f"缺少必填字段：{path}.{key}")
+        for key, child in value.items():
+            if key in properties:
+                errors.extend(_schema_errors(child, properties[key], f"{path}.{key}"))
+            elif rule.get("additionalProperties") is False:
+                errors.append(f"{path}.{key} 是未知字段")
+    if isinstance(value, list) and "items" in rule:
+        for index, item in enumerate(value):
+            errors.extend(_schema_errors(item, rule["items"], f"{path}[{index}]"))
+    return errors
+
+
 def validate_state(data: dict[str, Any], project: Path) -> list[str]:
     del project
-    errors: list[str] = []
+    schema = json.loads((PACKAGE_ROOT / "schemas/workflow-state.schema.json").read_text(encoding="utf-8"))
+    errors: list[str] = _schema_errors(data, schema)
     if not isinstance(data, dict):
         return ["状态根节点必须是对象"]
     for field in REQUIRED_FIELDS:
         if field not in data:
             errors.append(f"缺少必填字段：{field}")
 
+    for field in set(data) - set(REQUIRED_FIELDS):
+        errors.append(f"未知状态字段：{field}")
+    for field in ("project_id", "stage"):
+        if not isinstance(data.get(field), str) or not data[field].strip():
+            errors.append(f"{field} 必须是非空字符串")
+    if data.get("gate") is not None and not isinstance(data["gate"], str):
+        errors.append("gate 必须是字符串或 null")
+    task = data.get("current_task")
+    if task is not None and not isinstance(task, dict):
+        errors.append("current_task 必须是对象或 null")
+    elif isinstance(task, dict) and "paths" in task:
+        paths = task["paths"]
+        if not isinstance(paths, list) or any(
+            not isinstance(item, str) or not item or ".." in PurePosixPath(item.replace(chr(92), "/")).parts
+            for item in paths
+        ):
+            errors.append("current_task.paths 必须是项目内相对路径数组")
+    if not _valid_timestamp(data.get("updated_at")):
+        errors.append("updated_at 必须是带时区的 ISO 8601 时间")
     if data.get("schema_version") != SCHEMA_VERSION:
         errors.append(f"不支持的 schema_version：{data.get('schema_version')}")
     workflow_version = data.get("workflow_version")
@@ -223,7 +277,9 @@ def validate_state(data: dict[str, Any], project: Path) -> list[str]:
         or LEGACY_THREE_PART_VERSION.fullmatch(workflow_version)
     ):
         errors.append("workflow_version 必须是两段版本或兼容的历史三段版本")
-    if data.get("level") not in (1, 2, 3, 4):
+    elif tuple(int(part) for part in workflow_version.split(".")) > tuple(int(part) for part in load_version().split(".")):
+        errors.append("workflow_version 来自未来版本；不能自动降级")
+    if type(data.get("level")) is not int or data.get("level") not in (1, 2, 3, 4):
         errors.append("level 只允许 1、2、3 或 4")
     if data.get("risk") not in ("R1", "R2", "R3", "R4"):
         errors.append("risk 只允许 R1、R2、R3 或 R4")
@@ -236,6 +292,8 @@ def validate_state(data: dict[str, Any], project: Path) -> list[str]:
     if not isinstance(permissions, dict):
         errors.append("permissions 必须是对象")
     else:
+        if set(permissions) - {"allow_push_own_branch", "allow_create_draft_pr"}:
+            errors.append("permissions 包含未知字段")
         for name in ("allow_push_own_branch", "allow_create_draft_pr"):
             if not isinstance(permissions.get(name), bool):
                 errors.append(f"permissions.{name} 必须是布尔值")
@@ -254,6 +312,15 @@ def validate_state(data: dict[str, Any], project: Path) -> list[str]:
         if isinstance(value, str) and _is_absolute_file_path(value):
             errors.append(f"状态路径必须相对项目根目录：{value_path}")
     return errors
+
+
+def _valid_timestamp(value: Any) -> bool:
+    if not isinstance(value, str):
+        return False
+    try:
+        return datetime.fromisoformat(value.replace("Z", "+00:00")).utcoffset() is not None
+    except ValueError:
+        return False
 
 
 def _initial_status(state: dict[str, Any]) -> str:
@@ -463,6 +530,8 @@ def _state_paths(project: Path) -> tuple[Path, Path, Path]:
 def _require_current_state_paths(project: Path) -> tuple[Path, Path, Path]:
     paths = _state_paths(project)
     legacy_state = project / LEGACY_STATE_DIR_NAME / "state.json"
+    if legacy_state.parent.exists() and paths[0].parent.exists():
+        _check_retained_legacy(project)
     if not paths[0].is_file() and legacy_state.is_file():
         raise ValueError(
             f"发现旧状态 {legacy_state}；请运行 migrate 复制到 {STATE_DIR_NAME}"
@@ -474,7 +543,11 @@ def _copy_legacy_state(project: Path) -> tuple[tuple[Path, Path, Path], bool]:
     legacy = project / LEGACY_STATE_DIR_NAME
     current = project / STATE_DIR_NAME
     if legacy.exists() and current.exists():
-        raise FileExistsError("新旧状态目录同时存在；请人工核对，未覆盖任何状态")
+        try:
+            _check_retained_legacy(project)
+        except ValueError as exc:
+            raise FileExistsError(str(exc)) from exc
+        return _state_paths(project), False
     if not legacy.exists():
         return _state_paths(project), False
     legacy_state = _load_json(legacy / "state.json")
@@ -485,8 +558,33 @@ def _copy_legacy_state(project: Path) -> tuple[tuple[Path, Path, Path], bool]:
             raise ValueError("旧状态无效：" + "；".join(errors))
     elif source_schema not in LEGACY_SCHEMA_VERSIONS:
         raise ValueError(f"不支持从 Schema {source_schema} 迁移")
-    shutil.copytree(legacy, current)
-    return _state_paths(project), True
+    # Read from the retained source first. Do not create a destination until the
+    # transformed state is fully validated (invalid input must be retryable).
+    return (legacy / "state.json", legacy / "state.backup.json", _state_paths(project)[2]), True
+
+
+def _legacy_digest(project: Path) -> str:
+    return hashlib.sha256((project / LEGACY_STATE_DIR_NAME / "state.json").read_bytes()).hexdigest()
+
+
+def _check_retained_legacy(project: Path) -> None:
+    state = _load_json(project / STATE_DIR_NAME / "state.json")
+    history = state.get("history", [])
+    try:
+        digest = _legacy_digest(project)
+    except OSError as exc:
+        raise ValueError("旧状态不可读取；请人工核对") from exc
+    if not isinstance(history, list) or not any(
+        isinstance(event, dict) and event.get("event") == "legacy_state_retained"
+        and event.get("source_sha256") == digest for event in history
+    ):
+        raise ValueError("新旧状态目录同时存在且缺少匹配迁移记录；请人工核对，未覆盖任何状态")
+
+
+def _record_retained_legacy(state: dict[str, Any], project: Path) -> None:
+    state.setdefault("history", []).append({
+        "event": "legacy_state_retained", "source_sha256": _legacy_digest(project), "at": utc_now()
+    })
 
 
 def command_status(args: argparse.Namespace) -> int:
@@ -544,7 +642,7 @@ def command_transition(args: argparse.Namespace) -> int:
     state["gate"] = args.next_gate
     state["status"] = "waiting_approval" if args.next_gate else "in_progress"
     state["execution_policy"] = (
-        "CONFIRM" if args.next_gate else DEFAULT_EXECUTION_POLICY[state["level"]]
+        "CONFIRM" if args.next_gate or state["risk"] == "R3" else ("MANUAL_ONLY" if state["risk"] == "R4" else "AUTO")
     )
     state["updated_at"] = now
     state["history"].append(
@@ -587,10 +685,13 @@ def command_migrate(args: argparse.Namespace) -> int:
         if copied_legacy:
             previous = json.loads(json.dumps(state, ensure_ascii=False))
             _refresh_workflow_version(state)
+            _record_retained_legacy(state, project)
             errors = validate_state(state, project)
             if errors:
                 print("品牌迁移后状态无效：\n- " + "\n- ".join(errors), file=sys.stderr)
                 return 1
+            shutil.copytree(project / LEGACY_STATE_DIR_NAME, project / STATE_DIR_NAME)
+            state_path, backup_path, status_path = _state_paths(project)
             atomic_write_json(backup_path, previous)
             atomic_write_json(state_path, state)
             atomic_write_text(status_path, render_status(state))
@@ -681,10 +782,15 @@ def command_migrate(args: argparse.Namespace) -> int:
         }
     )
     state["updated_at"] = now
+    if copied_legacy:
+        _record_retained_legacy(state, project)
     errors = validate_state(state, project)
     if errors:
         print("迁移后状态无效：\n- " + "\n- ".join(errors), file=sys.stderr)
         return 1
+    if copied_legacy:
+        shutil.copytree(project / LEGACY_STATE_DIR_NAME, project / STATE_DIR_NAME)
+        state_path, backup_path, status_path = _state_paths(project)
     atomic_write_json(backup_path, previous)
     atomic_write_json(state_path, state)
     atomic_write_text(status_path, render_status(state))
@@ -721,7 +827,6 @@ def command_doctor(args: argparse.Namespace) -> int:
         "references/personal-execution-loop.md",
         "references/level4-capability-routing.md",
         "references/github-plugin-routing.md",
-        "docs/release/2.0-readiness.md",
         "adapters/codex/AGENTS.fragment.md",
         "adapters/claude-code/CLAUDE.fragment.md",
         "adapters/cursor/elx-level.mdc",
@@ -766,6 +871,8 @@ def command_doctor(args: argparse.Namespace) -> int:
                 state_valid = False
         checks.append(("项目状态", state_valid, str(state_path)))
 
+    package_errors = validate_package(root)
+    checks.append(("运行时包闭包", not package_errors, "；".join(package_errors) or "安装清单及引用完整"))
     required_failures = 0
     for name, passed, detail in checks:
         if name == "Git 命令" and not passed:
@@ -845,7 +952,12 @@ def command_render_adapter(args: argparse.Namespace) -> int:
         return 1
     rendered = template_path.read_text(encoding="utf-8")
     rendered = rendered.replace("{{LEVEL}}", str(state["level"]))
-    rendered = rendered.replace("{{LEVEL_DOC}}", LEVEL_REFERENCES[state["level"]])
+    try:
+        package_location = PACKAGE_ROOT.relative_to(project).as_posix()
+    except ValueError:
+        package_location = PACKAGE_ROOT.as_posix()
+    rendered = rendered.replace("{{PACKAGE_ROOT}}", package_location)
+    rendered = rendered.replace("{{LEVEL_DOC}}", package_location + "/" + LEVEL_REFERENCES[state["level"]])
     rendered = rendered.replace("{{LEVEL_MODE}}", LEVEL_MODES[state["level"]])
 
     if target_path.exists():
@@ -900,14 +1012,16 @@ def inspect_git(project: Path) -> dict[str, Any]:
     if code == 0 and branch:
         result["branch"] = branch
 
-    code, status = _git_output(project, "status", "--porcelain=v1", "--untracked-files=all")
+    code, status = _git_output(project, "status", "--porcelain=v1", "-z", "--untracked-files=all")
     if code == 0 and status:
         changed: list[str] = []
-        for line in status.splitlines():
-            path = line[3:] if len(line) > 3 else line
-            if " -> " in path:
-                path = path.split(" -> ", 1)[1]
-            changed.append(path.strip('"').replace("\\", "/"))
+        records = iter(status.split(chr(0)))
+        for record in records:
+            if not record:
+                continue
+            changed.append(record[3:])
+            if "R" in record[:2] or "C" in record[:2]:
+                changed.append(next(records, ""))
         result["changed_files"] = changed
 
     code, remotes = _git_output(project, "remote")
@@ -928,21 +1042,94 @@ def inspect_git(project: Path) -> dict[str, Any]:
             )
             if ahead_code == 0 and ahead.isdigit():
                 result["ahead_commits"] = int(ahead)
+    result["fingerprint"] = project_fingerprint(project)
     return result
 
 
-def _verifications_passed(state: dict[str, Any]) -> bool:
+def task_identity(state: dict[str, Any]) -> str:
+    task = state.get("current_task")
+    if not isinstance(task, dict) or not task:
+        return ""
+    identity = {key: task.get(key) for key in ("id", "title", "summary", "scope", "paths", "out_of_scope")}
+    return hashlib.sha256(json.dumps(identity, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
+
+
+def project_fingerprint(project: Path) -> str:
+    code, output = _git_output(project, "ls-files", "-z", "--cached", "--others", "--exclude-standard")
+    if code:
+        return ""
+    digest = hashlib.sha256()
+    for name in sorted(set(output.split(chr(0))) - {""}):
+        if name.startswith((STATE_DIR_NAME + "/", LEGACY_STATE_DIR_NAME + "/")) or name == "docs/elx-level/STATUS.md":
+            continue
+        path = project / name
+        digest.update(name.encode("utf-8") + bytes([0]))
+        if path.is_symlink():
+            digest.update(b"link:" + os.readlink(path).encode("utf-8"))
+        elif path.is_file():
+            digest.update(b"file:" + path.read_bytes())
+        else:
+            digest.update(b"missing")
+        digest.update(bytes([0]))
+    return digest.hexdigest()
+
+
+def _verifications_passed(state: dict[str, Any], git_info: dict[str, Any] | None = None) -> bool:
     verifications = state.get("verifications")
-    if not isinstance(verifications, list) or not verifications:
+    task_id = task_identity(state)
+    fingerprint = (git_info or {}).get("fingerprint")
+    if not task_id or not fingerprint or not isinstance(verifications, list) or not verifications:
         return False
-    accepted = {"pass", "passed", "ok", "success", "成功", "通过"}
-    for verification in verifications:
-        if not isinstance(verification, dict):
-            return False
-        status = str(verification.get("status") or verification.get("result") or "").lower()
-        if status not in accepted:
-            return False
-    return True
+    # Historical evidence remains readable; only the current task and content qualify.
+    current = [item for item in verifications if isinstance(item, dict)
+               and item.get("task_id") == task_id and item.get("fingerprint") == fingerprint]
+    if not current:
+        return False
+    return all(item.get("status") == "passed" and item.get("exit_code") == 0
+               and bool(item.get("command")) and _valid_timestamp(item.get("at"))
+               for item in current)
+
+
+def command_verify(args: argparse.Namespace) -> int:
+    project = Path(args.project).expanduser().resolve()
+    try:
+        state_path, backup_path, status_path = _require_current_state_paths(project)
+        state = _load_json(state_path)
+        errors = validate_state(state, project)
+        if errors:
+            raise ValueError("；".join(errors))
+        if not task_identity(state):
+            raise ValueError("请先记录已确认的 current_task，再执行验证")
+        command = list(args.command)
+        if command and command[0] == "--":
+            command.pop(0)
+        if not command:
+            raise ValueError("verify 需要 -- 后的验证命令和参数")
+        before = project_fingerprint(project)
+        if not before:
+            raise ValueError("verify 需要可读取的 Git 项目；非 Git 项目在变更记录中保留人工验证")
+        result = subprocess.run(command, cwd=project, check=False, shell=False)
+        after = project_fingerprint(project)
+        if result.returncode == 0 and before != after:
+            raise ValueError("验证改变了项目文件；未登记通过，请检查变化后重新验证")
+        previous = json.loads(json.dumps(state))
+        display_command = [Path(command[0]).name, *command[1:]]
+        entry = {"command": subprocess.list2cmdline(display_command), "status": "passed" if result.returncode == 0 else "failed",
+                 "exit_code": result.returncode, "at": utc_now(), "task_id": task_identity(state), "fingerprint": after}
+        state["verifications"] = [item for item in state["verifications"] if not (
+            isinstance(item, dict) and item.get("task_id") == entry["task_id"]
+            and item.get("fingerprint") == after and item.get("command") == entry["command"])] + [entry]
+        state["updated_at"] = utc_now()
+        errors = validate_state(state, project)
+        if errors:
+            raise ValueError("验证记录无效：" + "；".join(errors))
+        atomic_write_json(backup_path, previous)
+        atomic_write_json(state_path, state)
+        atomic_write_text(status_path, render_status(state))
+        return 0 if result.returncode == 0 else 1
+    except (ValueError, OSError) as exc:
+        print(f"验证未通过：{exc}", file=sys.stderr)
+        return 1
 
 
 def _changes_are_in_scope(state: dict[str, Any], git_info: dict[str, Any]) -> bool:
@@ -1006,6 +1193,8 @@ def evaluate_git_action(
         reasons.append("Git 初始化会改变项目治理边界，必须先通过人工 Gate。")
         return decision
 
+    if state.get("status") not in {"in_progress", "completed"} or state.get("gate") or state.get("execution_policy") != "AUTO":
+        reasons.append("状态、Gate 或执行策略不允许自动 Git 动作。")
     if not git_info.get("available"):
         reasons.append("未发现 Git 命令。")
     if not git_info.get("repository"):
@@ -1024,13 +1213,13 @@ def evaluate_git_action(
         reasons.append("当前分支不是本 Skill 创建或明确接管的分支。")
     if not git_info.get("branch"):
         reasons.append("无法识别当前分支。")
-    if not git_info.get("changed_files"):
+    if action == "local_commit" and not git_info.get("changed_files"):
         reasons.append("没有可提交的文件修改。")
-    if not _changes_are_in_scope(state, git_info):
+    if git_info.get("changed_files") and not _changes_are_in_scope(state, git_info):
         reasons.append("修改超出 current_task 声明范围。")
     if git_info.get("unrelated_changes"):
         reasons.append("检测到用户无关修改，禁止纳入自动提交。")
-    if not _verifications_passed(state):
+    if not _verifications_passed(state, git_info):
         reasons.append("尚无完整通过的验证证据。")
 
     if action == "local_commit":
@@ -1145,31 +1334,76 @@ PATCH_SUBJECT_PATTERN = re.compile(
 BREAKING_CHANGE_PATTERN = re.compile(r"BREAKING\s*CHANGE", re.IGNORECASE)
 
 
+def _manifest_version(text: str, kind: str) -> tuple[str, int, int] | None:
+    if kind == "package_json":
+        if not isinstance(json.loads(text), dict):
+            raise ValueError("package.json 必须是对象")
+        decoder = json.JSONDecoder()
+        cursor = text.index("{") + 1
+        found = []
+        while True:
+            while cursor < len(text) and text[cursor].isspace():
+                cursor += 1
+            if text[cursor] == "}":
+                break
+            key, cursor = decoder.raw_decode(text, cursor)
+            while text[cursor].isspace():
+                cursor += 1
+            if text[cursor] != ":":
+                raise ValueError("无效 JSON 字段")
+            cursor += 1
+            while text[cursor].isspace():
+                cursor += 1
+            start = cursor
+            value, cursor = decoder.raw_decode(text, cursor)
+            if key == "version":
+                if not isinstance(value, str):
+                    raise ValueError("项目 version 必须是字符串")
+                found.append((value, start, cursor))
+            while text[cursor].isspace():
+                cursor += 1
+            if text[cursor] == ",":
+                cursor += 1
+            elif text[cursor] != "}":
+                raise ValueError("无效 JSON 分隔符")
+        if len(found) > 1:
+            raise ValueError("重复的项目 version 字段")
+        return found[0] if found else None
+    sections = {"project", "tool.poetry"} if kind == "pyproject.toml" else {"package", "workspace.package"}
+    section = ""
+    offset = 0
+    found = []
+    for line in text.splitlines(keepends=True):
+        header = re.match(r"\s*\[([^\[\]]+)\]\s*(?:#.*)?$", line.strip())
+        if header:
+            section = header.group(1).strip()
+        elif line.lstrip().startswith("["):
+            section = ""
+        if section in sections and re.match(r"\s*(?:version\.workspace|dynamic)\s*=", line) and "version" in line:
+            raise ValueError("动态或继承的版本需要项目自己的版本工具")
+        match = re.match(r"""\s*version\s*=\s*(["'])([^"'\r\n]+)\1\s*(?:#.*)?$""", line.rstrip("\r\n"))
+        if section in sections and match:
+            found.append((match.group(2), offset + match.start(1), offset + match.end(2) + 1))
+        offset += len(line)
+    if len(found) > 1:
+        raise ValueError("存在多个项目版本来源，请明确唯一权威版本")
+    return found[0] if found else None
+
+
 def detect_version_source(project: Path) -> dict[str, Any] | None:
-    version_file = project / "VERSION"
-    if version_file.is_file():
-        text = version_file.read_text(encoding="utf-8").strip()
-        if text:
-            return {"path": version_file, "kind": "version_file", "version": text}
-    package_json = project / "package.json"
-    if package_json.is_file():
-        try:
-            data = json.loads(package_json.read_text(encoding="utf-8"))
-        except ValueError:
-            data = {}
-        version = str(data.get("version") or "").strip()
-        if version:
-            return {"path": package_json, "kind": "package_json", "version": version}
-    for name in ("pyproject.toml", "Cargo.toml"):
+    for name in VERSION_SOURCE_ORDER:
         path = project / name
         if not path.is_file():
             continue
-        match = re.search(
-            r'(?m)^version\s*=\s*["\']([^"\']+)["\']',
-            path.read_text(encoding="utf-8"),
-        )
-        if match:
-            return {"path": path, "kind": name, "version": match.group(1).strip()}
+        text = path.read_text(encoding="utf-8")
+        if name == "VERSION":
+            if text.strip():
+                return {"path": path, "kind": "version_file", "version": text.strip()}
+        else:
+            kind = "package_json" if name == "package.json" else name
+            located = _manifest_version(text, kind)
+            if located:
+                return {"path": path, "kind": kind, "version": located[0]}
     return None
 
 
@@ -1196,28 +1430,37 @@ def highest_change_level(groups: dict[str, list[str]]) -> str:
 
 
 def commits_since_version_tag(project: Path, version: str) -> tuple[list[str], str | None]:
-    git = shutil.which("git")
-    if not git:
-        raise ValueError("未发现 Git 命令，无法分析提交历史。")
-    tag = None
+    baseline = None
     for candidate in (f"v{version}", version):
-        probe = subprocess.run(
-            [git, "rev-parse", "-q", "--verify", f"refs/tags/{candidate}"],
-            cwd=project,
-            capture_output=True,
-            text=True,
-        )
-        if probe.returncode == 0:
-            tag = candidate
+        code, _ = _git_output(project, "rev-parse", "-q", "--verify", f"refs/tags/{candidate}")
+        if code == 0:
+            code, _ = _git_output(project, "merge-base", "--is-ancestor", candidate, "HEAD")
+            if code:
+                raise ValueError("版本 Tag 不在当前历史中，请确认版本基线")
+            baseline = candidate
             break
-    arguments = ["log", "--pretty=%s"]
-    if tag:
-        arguments.append(f"{tag}..HEAD")
-    result = subprocess.run([git, *arguments], cwd=project, capture_output=True, text=True)
-    if result.returncode != 0:
-        return [], tag
-    subjects = [line.strip() for line in result.stdout.splitlines() if line.strip()]
-    return subjects, tag
+    if baseline is None:
+        code, log = _git_output(project, "log", "--format=%H%x00%s")
+        if code:
+            raise ValueError("无法读取提交历史")
+        for line in log.splitlines():
+            sha, _, subject = line.partition(chr(0))
+            if subject == f"chore(release): v{version}":
+                baseline = sha
+                break
+        if baseline is None:
+            source = detect_version_source(project)
+            if source:
+                code, sha = _git_output(project, "log", "-1", "--format=%H", "--", source["path"].name)
+                if code == 0 and sha:
+                    baseline = sha
+    arguments = ["log", "--format=%B%x00"]
+    if baseline:
+        arguments.append(f"{baseline}..HEAD")
+    code, output = _git_output(project, *arguments)
+    if code:
+        raise ValueError("无法读取版本基线之后的提交")
+    return [message.strip() for message in output.split(chr(0)) if message.strip()], baseline
 
 
 def compute_next_version(current: str, level: str) -> str:
@@ -1248,20 +1491,24 @@ def compute_next_version(current: str, level: str) -> str:
 
 
 def write_version_to_source(source: dict[str, Any], new_version: str) -> None:
-    path: Path = source["path"]
-    old_version: str = source["version"]
-    if source["kind"] == "version_file":
-        path.write_text(new_version + "\n", encoding="utf-8")
-        return
+    path = source["path"]
+    if path.is_symlink():
+        raise ValueError("版本文件不能是符号链接")
     text = path.read_text(encoding="utf-8")
-    for quote in ('"', "'"):
-        replaced = text.replace(
-            f"{quote}{old_version}{quote}", f"{quote}{new_version}{quote}", 1
-        )
-        if replaced != text:
-            path.write_text(replaced, encoding="utf-8")
-            return
-    raise ValueError(f"无法在 {path.name} 中定位版本号 {old_version}。")
+    if source["kind"] == "version_file":
+        if text.strip() != source["version"]:
+            raise ValueError("版本源在计划后发生变化")
+        atomic_write_text(path, new_version)
+        return
+    located = _manifest_version(text, source["kind"])
+    if not located or located[0] != source["version"]:
+        raise ValueError("无法定位批准的项目版本字段")
+    _, start, end = located
+    quote = text[start]
+    updated = text[:start] + quote + new_version + quote + text[end:]
+    if _manifest_version(updated, source["kind"])[0] != new_version:
+        raise ValueError("版本写回校验失败")
+    atomic_write_text(path, updated)
 
 
 def update_project_changelog(
@@ -1316,23 +1563,29 @@ def command_version_bump(args: argparse.Namespace) -> int:
         print("当前目录不是 Git 仓库；版本演进依赖提交历史。", file=sys.stderr)
         return 2
 
-    source = detect_version_source(project)
+    try:
+        source = detect_version_source(project)
+    except ValueError as exc:
+        print(str(exc), file=sys.stderr)
+        return 1
     creating = source is None
     current_version = source["version"] if source else "0.1"
     groups: dict[str, list[str]] = {"major": [], "minor": [], "patch": [], "unknown": []}
     tag = None
     forced_reason = None
-    if state.get("risk") in {"R3", "R4"}:
-        forced_reason = "当前任务风险为 R3/R4，按破坏性变更处理"
     if creating:
         planned_version = "0.1"
     else:
-        subjects, tag = commits_since_version_tag(project, current_version)
+        try:
+            subjects, tag = commits_since_version_tag(project, current_version)
+        except ValueError as exc:
+            print(str(exc), file=sys.stderr)
+            return 1
         groups = classify_commit_subjects(subjects)
         change_level = highest_change_level(groups)
         if forced_reason:
             change_level = "major"
-        planned_version = compute_next_version(current_version, change_level)
+        planned_version = compute_next_version(current_version, change_level) if any(groups.values()) else current_version
 
     if not args.apply:
         plan = {
@@ -1341,19 +1594,37 @@ def command_version_bump(args: argparse.Namespace) -> int:
             "version_source": None if creating else {"file": source["path"].name, "kind": source["kind"]},
             "current_version": None if creating else current_version,
             "create_version_file": creating,
-            "change_level": "major" if forced_reason else (None if creating else highest_change_level(groups)),
+            "change_level": "major" if forced_reason else (None if creating or not any(groups.values()) else highest_change_level(groups)),
             "forced_reason": forced_reason,
             "since_tag": None if creating else tag,
             "commits": {} if creating else groups,
             "new_version": planned_version,
-            "changelog_will_update": (project / "CHANGELOG.md").is_file(),
-            "commit_subject": f"chore(release): v{planned_version}",
+            "changelog_will_update": (creating or any(groups.values())) and (project / "CHANGELOG.md").is_file(),
+            "commit_subject": f"chore(release): v{planned_version}" if creating or any(groups.values()) else None,
         }
         print(json.dumps(plan, ensure_ascii=False, indent=2))
         return 0
 
-    if not _verifications_passed(state):
+    if state.get("status") not in {"in_progress", "completed"} or state.get("gate") or state.get("execution_policy") != "AUTO":
+        print("当前状态、Gate 或策略不允许应用版本变更。", file=sys.stderr)
+        return 2
+    code, staged_before = _git_output(project, "diff", "--cached", "--name-only")
+    if code or staged_before:
+        print("暂存区已有内容或无法检查；未修改版本，请先处理已有暂存。", file=sys.stderr)
+        return 2
+    targets = [source["path"].name] if source else ["VERSION"]
+    code, dirty_targets = _git_output(project, "diff", "--name-only", "--", *targets, "CHANGELOG.md")
+    if code or dirty_targets:
+        print("版本源或 CHANGELOG 存在未提交修改；未应用版本变更。", file=sys.stderr)
+        return 2
+    if not _verifications_passed(state, git_info):
         print("尚无完整通过的验证证据；未验证不发布。", file=sys.stderr)
+        return 2
+    if not creating and not any(groups.values()):
+        print("版本基线之后没有新提交；未更新版本。")
+        return 0
+    if (project / "CHANGELOG.md").is_symlink():
+        print("CHANGELOG 不能是符号链接。", file=sys.stderr)
         return 2
     if creating:
         version_path = project / "VERSION"
@@ -1388,12 +1659,13 @@ def command_version_bump(args: argparse.Namespace) -> int:
     commit_arguments = [git, "commit", "-m", subject]
     if body_lines:
         commit_arguments += ["-m", "\n".join(body_lines[:20])]
+    commit_arguments += ["--only", "--", *staged]
     commit_result = subprocess.run(
         commit_arguments, cwd=project, capture_output=True, text=True
     )
     if commit_result.returncode != 0:
         print(
-            "发布提交失败：\n" + (commit_result.stderr or commit_result.stdout).strip(),
+            "发布提交失败；版本文件及暂存内容已保留，请检查后恢复或继续，勿重复 apply：\n" + (commit_result.stderr or commit_result.stdout).strip(),
             file=sys.stderr,
         )
         return 1
@@ -1527,7 +1799,9 @@ def validate_package(root: Path) -> list[str]:
         LEVEL_DOCUMENT,
         "schemas/workflow-state.schema.json",
         "evals/evals.json",
-        "docs/release/2.0-readiness.md",
+        "package-files.json",
+        "scripts/workflow.py",
+        "references/release-versioning.md",
         "core/project-vibe-spec/PVS.md",
         "core/project-vibe-spec/SOURCE.md",
         "core/project-vibe-spec/references/decision-gates.md",
@@ -1557,6 +1831,24 @@ def validate_package(root: Path) -> list[str]:
     for relative in required:
         if not (root / relative).is_file():
             errors.append(f"缺少公共包文件：{relative}")
+    manifest_path = root / "package-files.json"
+    if manifest_path.is_file():
+        try:
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            items = manifest.get("items")
+            if manifest.get("version") != 1 or not isinstance(items, list) or not items:
+                raise ValueError("安装清单必须包含 version=1 和非空 items")
+            if any(not isinstance(item, str) or not item or Path(item).name != item or item in {".", ".."}
+                   or _is_absolute_file_path(item) for item in items) or len(items) != len(set(items)):
+                raise ValueError("安装清单必须是唯一的包内顶层路径")
+            for item in items:
+                if not (root / item).exists() or (root / item).is_symlink():
+                    raise ValueError(f"安装项不存在或为符号链接：{item}")
+            for item in required:
+                if Path(item).parts[0] not in items:
+                    raise ValueError(f"安装清单遗漏运行时文件：{item}")
+        except (ValueError, OSError) as exc:
+            errors.append(str(exc))
     errors.extend(_embedded_pvs_errors(root))
     if errors:
         return errors
@@ -1571,7 +1863,7 @@ def validate_package(root: Path) -> list[str]:
         return [f"公共合同无法读取：{exc}"]
     if not TWO_PART_VERSION.fullmatch(version):
         errors.append("VERSION 必须是两段版本（X.X）")
-    if schema.get("properties", {}).get("workflow_version", {}).get("const") != version:
+    if schema.get("x-current-workflow-version") != version:
         errors.append("Schema workflow_version 与 VERSION 不一致")
     if schema.get("properties", {}).get("level", {}).get("enum") != [1, 2, 3, 4]:
         errors.append("Schema level.enum 必须是 [1, 2, 3, 4]")
@@ -1661,6 +1953,11 @@ def build_parser() -> argparse.ArgumentParser:
     init_parser.add_argument("--level", required=True, type=int, choices=(1, 2, 3, 4))
     init_parser.add_argument("--force", action="store_true")
     init_parser.set_defaults(handler=command_init)
+
+    verify_parser = subparsers.add_parser("verify", help="执行验证并绑定当前任务与文件指纹")
+    verify_parser.add_argument("--project", required=True)
+    verify_parser.add_argument("command", nargs=argparse.REMAINDER)
+    verify_parser.set_defaults(handler=command_verify)
 
     validate_parser = subparsers.add_parser("validate", help="校验项目流程状态")
     validate_parser.add_argument("--project", required=True)

@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "items": [
+    "SKILL.md",
+    "README.md",
+    "README.en.md",
+    "LEVEL.md",
+    "VERSION",
+    "CHANGELOG.md",
+    "LICENSE",
+    "package-files.json",
+    "assets",
+    "core",
+    "references",
+    "templates",
+    "schemas",
+    "scripts",
+    "adapters",
+    "evals"
+  ]
+}

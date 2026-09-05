@@ -23,11 +23,15 @@ IDENTITY_ENV = {
 
 def write_state(project: Path, level: int = 1, verifications: list | None = None) -> dict:
     state = workflow.build_initial_state(project, level)
+    state["current_task"] = {"id": "release-test", "paths": ["VERSION", "CHANGELOG.md"]}
     state["verifications"] = (
         [{"command": "python -m unittest", "status": "passed"}]
         if verifications is None
         else verifications
     )
+    for entry in state["verifications"]:
+        entry.update({"task_id": workflow.task_identity(state), "fingerprint": workflow.project_fingerprint(project),
+                      "exit_code": 0 if entry.get("status") == "passed" else 1, "at": workflow.utc_now()})
     state_dir = project / ".elx-level"
     state_dir.mkdir(parents=True, exist_ok=True)
     (state_dir / "state.json").write_text(json.dumps(state), encoding="utf-8")
@@ -130,7 +134,7 @@ class VersionSourceTests(unittest.TestCase):
             with self.subTest(name=name), tempfile.TemporaryDirectory() as directory:
                 project = Path(directory)
                 (project / name).write_text(
-                    f'[package]\nname = "x"\nversion = "0.3.1"\n', encoding="utf-8"
+                    f'[{"project" if name == "pyproject.toml" else "package"}]\nname = "x"\nversion = "0.3.1"\n', encoding="utf-8"
                 )
                 source = workflow.detect_version_source(project)
                 self.assertEqual(source["kind"], name)
@@ -180,6 +184,7 @@ class VersionBumpCommandTests(unittest.TestCase):
             (project / "CHANGELOG.md").write_text(
                 "# Changelog\n\n## [1.2.3] - 2026-01-01\n\n- old entry\n", encoding="utf-8"
             )
+            write_state(project, level=1)
             args = argparse.Namespace(project=str(project), apply=True, message=None)
             with mock.patch.dict(os.environ, IDENTITY_ENV):
                 exit_code = workflow.command_version_bump(args)

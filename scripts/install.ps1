@@ -75,10 +75,8 @@ function Assert-SafeTarget {
 function Copy-Package {
     param([string]$SourceRoot, [string]$TargetPath)
 
-    $items = @(
-    'SKILL.md', 'README.md', 'README.en.md', 'LEVEL.md', 'VERSION', 'CHANGELOG.md', 'LICENSE',
-        'assets', 'core', 'references', 'templates', 'schemas', 'scripts', 'adapters', 'evals'
-    )
+    $manifest = Get-Content -LiteralPath (Join-Path $SourceRoot 'package-files.json') -Raw -Encoding UTF8 | ConvertFrom-Json
+    $items = $manifest.items
     New-Item -ItemType Directory -Path $TargetPath -Force | Out-Null
     foreach ($item in $items) {
         $sourceItem = Join-Path $SourceRoot $item
@@ -134,8 +132,12 @@ if (Test-Path -LiteralPath $target) {
         'unknown'
     }
     if ($Mode -eq 'install' -and $installedVersion -eq $version) {
-        Write-Host "elx-level $version 已安装：$target"
-        exit 0
+        & $pythonCommand.Source $workflow validate-package --package-root $target
+        if ($LASTEXITCODE -eq 0) {
+            Write-Host "elx-level $version 已安装且校验通过：$target"
+            exit 0
+        }
+        Write-Host '同版本安装不完整，将保留原目录并重新安装。'
     }
     $timestamp = Get-Date -Format 'yyyyMMdd-HHmmss'
     $backup = "$target.backup-$timestamp"
@@ -163,6 +165,8 @@ if (Test-Path -LiteralPath $staging) {
 
 try {
     Copy-Package -SourceRoot $packageRoot -TargetPath $staging
+    & $pythonCommand.Source $workflow validate-package --package-root $staging
+    if ($LASTEXITCODE -ne 0) { throw '错误：安装暂存包校验失败，未替换原安装。' }
     if ($backup) {
         Move-Item -LiteralPath $target -Destination $backup
     }

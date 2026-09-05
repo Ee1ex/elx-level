@@ -87,8 +87,11 @@ if [[ -e "$target" ]]; then
   installed_version="unknown"
   [[ -f "$installed_version_file" ]] && installed_version="$(tr -d '\r\n' < "$installed_version_file")"
   if [[ "$mode" == "install" && "$installed_version" == "$version" ]]; then
-    echo "elx-level $version 已安装：$target"
-    exit 0
+    if "$python_cmd" "$package_root/scripts/workflow.py" validate-package --package-root "$target"; then
+      echo "elx-level $version 已安装且校验通过：$target"
+      exit 0
+    fi
+    echo '同版本安装不完整，将保留原目录并重新安装。'
   fi
   backup="$target.backup-$(date +%Y%m%d-%H%M%S)"
   [[ ! -e "$backup" ]] || { echo "错误：conflict backup 已存在：$backup" >&2; exit 1; }
@@ -116,12 +119,14 @@ cleanup_install() {
 trap cleanup_install EXIT
 
 mkdir -p -- "$staging"
-items=(SKILL.md README.md README.en.md LEVEL.md VERSION CHANGELOG.md LICENSE assets \
-  core references templates schemas scripts adapters evals)
+items=()
+while IFS= read -r item; do item="${item%$'\r'}"; items+=("$item"); done < <(
+  "$python_cmd" -c 'import json,sys; print("\n".join(json.load(open(sys.argv[1], encoding="utf-8"))["items"]))' "$package_root/package-files.json"
+)
 for item in "${items[@]}"; do
-  [[ -e "$package_root/$item" ]] || continue
   cp -R -- "$package_root/$item" "$staging/"
 done
+"$python_cmd" "$package_root/scripts/workflow.py" validate-package --package-root "$staging"
 [[ -z "$backup" ]] || mv -- "$target" "$backup"
 mv -- "$staging" "$target"
 trap - EXIT

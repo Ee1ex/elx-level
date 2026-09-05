@@ -12,8 +12,9 @@ from scripts import workflow
 
 
 def ready_state() -> dict:
-    return {
+    state = {
         "risk": "R2",
+        "status": "in_progress", "gate": None, "execution_policy": "AUTO",
         "permissions": {
             "allow_push_own_branch": False,
             "allow_create_draft_pr": False,
@@ -22,6 +23,10 @@ def ready_state() -> dict:
         "verifications": [{"command": "python -m unittest", "status": "passed"}],
         "git": {"skill_created_branch": True},
     }
+
+    state["verifications"][0].update({"task_id": workflow.task_identity(state), "fingerprint": "current-content",
+                                       "exit_code": 0, "at": workflow.utc_now()})
+    return state
 
 
 def personal_state(level: int) -> dict:
@@ -34,6 +39,7 @@ def personal_state(level: int) -> dict:
 def ready_git() -> dict:
     return {
         "available": True,
+        "fingerprint": "current-content",
         "repository": True,
         "branch": "workflow/policy",
         "default_branch": "main",
