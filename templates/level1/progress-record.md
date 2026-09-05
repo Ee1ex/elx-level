@@ -1,5 +1,7 @@
 # LEVEL 1 小切片 Progress Record
 
+> 兼容模板：已有项目可继续使用。新项目优先采用 common/change-record.md；不另建平行记录。
+
 - 状态：进行中
 - 负责人：<!-- 实现负责人 -->
 - 关联 Gate：无；触发确认边界时填写具体 Gate

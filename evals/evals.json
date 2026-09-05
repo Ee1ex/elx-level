@@ -5,152 +5,387 @@
     {
       "id": "level1-downloadable-tool",
       "prompt": "我有一个离线工具，会重新打包上传新版本供用户下载，但没有账号、云端业务数据或在线服务责任，请判断 LEVEL。",
-      "expected_output": {"trigger": true, "level": 1, "requires_level_confirmation": true},
-      "files": ["SKILL.md", "references/level-selection.md", "LEVEL.md"]
+      "expected_output": {
+        "trigger": true,
+        "level": 1,
+        "requires_level_confirmation": true
+      },
+      "files": [
+        "SKILL.md",
+        "references/level-selection.md",
+        "LEVEL.md"
+      ]
     },
     {
       "id": "level1-static-online-page",
       "prompt": "帮我做一个部署到线上但没有用户系统的静态展示页，先判断 LEVEL。",
-      "expected_output": {"trigger": true, "level": 1, "requires_level_confirmation": true},
-      "files": ["SKILL.md", "references/level-selection.md", "LEVEL.md"]
+      "expected_output": {
+        "trigger": true,
+        "level": 1,
+        "requires_level_confirmation": true
+      },
+      "files": [
+        "SKILL.md",
+        "references/level-selection.md",
+        "LEVEL.md"
+      ]
     },
     {
       "id": "level1-game-mod",
       "prompt": "我想给单机游戏做一个只改界面的 Mod，边做边改，最终统一测试和打包。",
-      "expected_output": {"trigger": true, "level": 1, "requires_level_confirmation": true},
-      "files": ["SKILL.md", "LEVEL.md", "templates/level1/project-brief.md"]
+      "expected_output": {
+        "trigger": true,
+        "level": 1,
+        "requires_level_confirmation": true
+      },
+      "files": [
+        "SKILL.md",
+        "LEVEL.md",
+        "templates/level1/project-brief.md"
+      ]
     },
     {
       "id": "level1-static-update-boundary",
       "prompt": "这个静态网页以后会经常更新，但没有用户登录、云端状态或持续在线服务，请判断是否必须升级。",
-      "expected_output": {"trigger": true, "level": 1, "updates_do_not_mean_operations": true},
-      "files": ["references/level-selection.md", "references/project-vibe-spec-bridge.md"]
+      "expected_output": {
+        "trigger": true,
+        "level": 1,
+        "updates_do_not_mean_operations": true
+      },
+      "files": [
+        "references/level-selection.md",
+        "references/project-vibe-spec-bridge.md"
+      ]
     },
     {
       "id": "level2-owned-saas",
       "prompt": "我要开发一个自己负责的 SaaS，有登录、权限、云端数据、持续发布和用户支持责任，请按严格流程判断 LEVEL。",
-      "expected_output": {"trigger": true, "level": 2, "requires_level_confirmation": true},
-      "files": ["SKILL.md", "references/level-selection.md", "LEVEL.md", "templates/level2/requirements.md"]
+      "expected_output": {
+        "trigger": true,
+        "level": 2,
+        "requires_level_confirmation": true
+      },
+      "files": [
+        "SKILL.md",
+        "references/level-selection.md",
+        "LEVEL.md",
+        "templates/level2/requirements.md"
+      ]
     },
     {
       "id": "level2-online-api",
       "prompt": "我要长期维护一个没有传统登录的公开 API，有定时任务、第三方线上依赖、监控和回滚责任，请判断 LEVEL。",
-      "expected_output": {"trigger": true, "level": 2, "requires_level_confirmation": true},
-      "files": ["references/level-selection.md", "LEVEL.md", "templates/level2/operations-readiness.md"]
+      "expected_output": {
+        "trigger": true,
+        "level": 2,
+        "requires_level_confirmation": true
+      },
+      "files": [
+        "references/level-selection.md",
+        "LEVEL.md",
+        "templates/level2/operations-readiness.md"
+      ]
     },
     {
       "id": "level3-existing-bug",
       "prompt": "帮我修复一个已有 GitHub 项目的 Bug，先理解仓库、建立修改前基线，再准备贡献 PR。",
-      "expected_output": {"trigger": true, "level": 3, "requires_level_confirmation": true},
-      "files": ["SKILL.md", "LEVEL.md", "templates/level3/change-proposal.md"]
+      "expected_output": {
+        "trigger": true,
+        "level": 3,
+        "requires_level_confirmation": true
+      },
+      "files": [
+        "SKILL.md",
+        "LEVEL.md",
+        "templates/level3/change-proposal.md"
+      ]
     },
     {
       "id": "level3-team-change",
       "prompt": "我要参与团队已有项目的一个小功能修改，必须遵守 CI、Review、分支和交接规则，请按标准流程执行。",
-      "expected_output": {"trigger": true, "level": 3, "requires_level_confirmation": true},
-      "files": ["LEVEL.md", "templates/level3/project-map.md", "references/git-and-draft-pr.md"]
+      "expected_output": {
+        "trigger": true,
+        "level": 3,
+        "requires_level_confirmation": true
+      },
+      "files": [
+        "LEVEL.md",
+        "templates/level3/project-map.md",
+        "references/git-and-draft-pr.md"
+      ]
     },
     {
       "id": "level4-complex-automation",
       "prompt": "我想做一个跨多个系统的复杂自动化编排，先做机会、需求、MVP、方案和风险分析，不要写代码。",
-      "expected_output": {"trigger": true, "level": 4, "analysis_only": true, "requires_level_confirmation": true},
-      "files": ["SKILL.md", "LEVEL.md", "templates/level4/requirements-analysis.md"]
+      "expected_output": {
+        "trigger": true,
+        "level": 4,
+        "analysis_only": true,
+        "requires_level_confirmation": true
+      },
+      "files": [
+        "SKILL.md",
+        "LEVEL.md",
+        "templates/level4/requirements-analysis.md"
+      ]
     },
     {
       "id": "level4-large-product",
       "prompt": "这是一个大型产品，涉及多个系统和多人协作，现在只想比较方案和确认范围，请判断 LEVEL 并停在需求分析。",
-      "expected_output": {"trigger": true, "level": 4, "analysis_only": true},
-      "files": ["references/level-selection.md", "LEVEL.md"]
+      "expected_output": {
+        "trigger": true,
+        "level": 4,
+        "analysis_only": true
+      },
+      "files": [
+        "references/level-selection.md",
+        "LEVEL.md"
+      ]
     },
     {
       "id": "migration-legacy-levels",
       "prompt": "请把旧状态等级迁移到四级模型，并保留备份、STATUS 记录和迁移后的人工 Gate。",
-      "expected_output": {"trigger": true, "migration": "1-to-1-2-to-3-3-to-4", "gate_reconfirmation": true},
-      "files": ["references/state-protocol.md", "scripts/workflow.py", "schemas/workflow-state.schema.json"]
+      "expected_output": {
+        "trigger": true,
+        "migration": "1-to-1-2-to-3-3-to-4",
+        "gate_reconfirmation": true
+      },
+      "files": [
+        "references/state-protocol.md",
+        "scripts/workflow.py",
+        "schemas/workflow-state.schema.json"
+      ]
     },
     {
       "id": "migration-explicit-level2",
       "prompt": "旧 LEVEL 3 项目想按新的自有线上产品 LEVEL 2 继续，请要求我留下重新确认记录，不要自动映射。",
-      "expected_output": {"trigger": true, "level": 2, "requires_explicit_reconfirmation": true},
-      "files": ["references/state-protocol.md", "SKILL.md", "scripts/workflow.py"]
+      "expected_output": {
+        "trigger": true,
+        "level": 2,
+        "requires_explicit_reconfirmation": true
+      },
+      "files": [
+        "references/state-protocol.md",
+        "SKILL.md",
+        "scripts/workflow.py"
+      ]
     },
     {
       "id": "exclude-skill-creation",
       "prompt": "把我的提示词制作成一个新的 Agent Skill。",
-      "expected_output": {"trigger": false, "exclusion": "skill_creation"},
-      "files": ["SKILL.md"]
+      "expected_output": {
+        "trigger": false,
+        "exclusion": "skill_creation"
+      },
+      "files": [
+        "SKILL.md"
+      ]
     },
     {
       "id": "exclude-pure-explanation",
       "prompt": "只解释一下 LEVEL 2 和 LEVEL 3 的区别，不要创建或修改任何文件。",
-      "expected_output": {"trigger": false, "exclusion": "pure_explanation"},
-      "files": ["SKILL.md", "references/level-selection.md"]
+      "expected_output": {
+        "trigger": false,
+        "exclusion": "pure_explanation"
+      },
+      "files": [
+        "SKILL.md",
+        "references/level-selection.md"
+      ]
     },
     {
       "id": "exclude-read-only-review",
       "prompt": "只读 Review 这份代码并告诉我问题，不要修复。",
-      "expected_output": {"trigger": false, "exclusion": "read_only_review"},
-      "files": ["SKILL.md"]
+      "expected_output": {
+        "trigger": false,
+        "exclusion": "read_only_review"
+      },
+      "files": [
+        "SKILL.md"
+      ]
     },
     {
       "id": "git-init-gate",
       "prompt": "这个目录还不是 Git 仓库，按 LEVEL 3 推进并自动提交。",
-      "expected_output": {"trigger": true, "level": 3, "git_init": "requires_gate", "remote_write": false},
-      "files": ["references/git-and-draft-pr.md", "references/risk-and-permissions.md"]
+      "expected_output": {
+        "trigger": true,
+        "level": 3,
+        "git_init": "requires_gate",
+        "remote_write": false
+      },
+      "files": [
+        "references/git-and-draft-pr.md",
+        "references/risk-and-permissions.md"
+      ]
     },
     {
       "id": "level2-bundled-pvs",
       "prompt": "我要开发有登录、云端数据和持续运营责任的自有产品，请按 LEVEL 2 完整 PVS 推进；不要让我再安装其他 Skill。",
-      "expected_output": {"trigger": true, "level": 2, "pvs_source": "bundled", "external_install": false},
-      "files": ["SKILL.md", "references/project-vibe-spec-bridge.md", "core/project-vibe-spec/PVS.md"]
+      "expected_output": {
+        "trigger": true,
+        "level": 2,
+        "pvs_source": "bundled",
+        "external_install": false
+      },
+      "files": [
+        "SKILL.md",
+        "references/project-vibe-spec-bridge.md",
+        "core/project-vibe-spec/PVS.md"
+      ]
     },
     {
       "id": "single-skill-offline",
       "prompt": "断网环境只安装 elx-level 后，帮我初始化一个 LEVEL 2 项目。",
-      "expected_output": {"trigger": true, "level": 2, "single_skill": true, "network_required": false},
-      "files": ["README.md", "core/project-vibe-spec/PVS.md", "templates/template-map.json"]
+      "expected_output": {
+        "trigger": true,
+        "level": 2,
+        "single_skill": true,
+        "network_required": false
+      },
+      "files": [
+        "README.md",
+        "core/project-vibe-spec/PVS.md",
+        "templates/template-map.json"
+      ]
     },
     {
       "id": "independent-pvs-not-required",
       "prompt": "我没有单独安装 project-vibe-spec，是否还能按完整流程开发长期运营产品？",
-      "expected_output": {"trigger": true, "level": 2, "pvs_source": "bundled", "external_install": false},
-      "files": ["SKILL.md", "references/project-vibe-spec-bridge.md"]
+      "expected_output": {
+        "trigger": true,
+        "level": 2,
+        "pvs_source": "bundled",
+        "external_install": false
+      },
+      "files": [
+        "SKILL.md",
+        "references/project-vibe-spec-bridge.md"
+      ]
     },
     {
       "id": "github-all-levels-routing",
       "prompt": "这个项目已经本地验证完成，请按当前 LEVEL 准备 push、Draft PR、Merge、Tag 和 Release。",
-      "expected_output": {"trigger": true, "github_plugin": true, "single_remote_approval": true, "remote_readback": true},
-      "files": ["references/github-plugin-routing.md", "references/git-and-draft-pr.md"]
+      "expected_output": {
+        "trigger": true,
+        "github_plugin": true,
+        "single_remote_approval": true,
+        "remote_readback": true
+      },
+      "files": [
+        "references/github-plugin-routing.md",
+        "references/git-and-draft-pr.md"
+      ]
     },
     {
       "id": "github-plugin-unavailable",
       "prompt": "GitHub 插件没有安装或连接，但我想继续发布。",
-      "expected_output": {"trigger": true, "remote_write": false, "explain_install_or_connection": true, "silent_fallback": false},
-      "files": ["references/github-plugin-routing.md", "references/tool-routing.md"]
+      "expected_output": {
+        "trigger": true,
+        "remote_write_without_approval": false,
+        "declare_equivalent_tool": true,
+        "silent_fallback": false
+      },
+      "files": [
+        "references/github-plugin-routing.md",
+        "references/tool-routing.md"
+      ]
     },
     {
       "id": "level4-capability-installed",
       "prompt": "LEVEL 4 已确认进入原型节点，所需专业能力已安装。",
-      "expected_output": {"trigger": true, "level": 4, "route_installed_capability": true, "check_permissions": true},
-      "files": ["references/level4-capability-routing.md", "LEVEL.md"]
+      "expected_output": {
+        "trigger": true,
+        "level": 4,
+        "route_installed_capability": true,
+        "check_permissions": true
+      },
+      "files": [
+        "references/level4-capability-routing.md",
+        "LEVEL.md"
+      ]
     },
     {
       "id": "level4-capability-missing",
       "prompt": "LEVEL 4 到了日志排查节点，但专业能力缺失。",
-      "expected_output": {"trigger": true, "level": 4, "explain_source_use_permissions": true, "offer_fallback": true},
-      "files": ["references/level4-capability-routing.md", "references/tool-routing.md"]
+      "expected_output": {
+        "trigger": true,
+        "level": 4,
+        "explain_source_use_permissions": true,
+        "offer_fallback": true
+      },
+      "files": [
+        "references/level4-capability-routing.md",
+        "references/tool-routing.md"
+      ]
     },
     {
       "id": "level4-install-declined",
       "prompt": "我拒绝安装 LEVEL 4 推荐的外部 Skill，请继续。",
-      "expected_output": {"trigger": true, "level": 4, "generic_fallback": true, "record_gap": true},
-      "files": ["references/level4-capability-routing.md"]
+      "expected_output": {
+        "trigger": true,
+        "level": 4,
+        "generic_fallback": true,
+        "record_gap": true
+      },
+      "files": [
+        "references/level4-capability-routing.md"
+      ]
     },
     {
       "id": "level4-no-nested-skill",
       "prompt": "把 LEVEL 4 十个专业 Skill 都复制进 elx-level 包里。",
-      "expected_output": {"trigger": true, "level": 4, "nested_skill": false, "route_only": true},
-      "files": ["references/level4-capability-routing.md", "SKILL.md"]
+      "expected_output": {
+        "trigger": true,
+        "level": 4,
+        "nested_skill": false,
+        "route_only": true
+      },
+      "files": [
+        "references/level4-capability-routing.md",
+        "SKILL.md"
+      ]
+    },
+    {
+      "id": "l2-copy-change-lightweight",
+      "prompt": "已确认 LEVEL 2 的线上产品只将按钮提交改为保存，不变更行为。",
+      "expected_output": {
+        "level": 2,
+        "record": "one_change_entry",
+        "new_empty_ledgers": false,
+        "repeat_level_approval": false
+      },
+      "files": [
+        "LEVEL.md",
+        "references/documentation-contract.md",
+        "references/usage-examples.md"
+      ]
+    },
+    {
+      "id": "l1-storage-migration-detailed",
+      "prompt": "LEVEL 1 离线工具要改变已有数据格式，需要兼容旧版本。",
+      "expected_output": {
+        "level": 1,
+        "record": "REQ+PROG+DEC",
+        "data_approval": true
+      },
+      "files": [
+        "LEVEL.md",
+        "references/documentation-contract.md",
+        "references/usage-examples.md"
+      ]
+    },
+    {
+      "id": "handoff-unverified-platform",
+      "prompt": "接手实现完成但目标平台待验证的任务，状态中只有旧测试通过。",
+      "expected_output": {
+        "read_current_task": true,
+        "rerun_current_verification": true,
+        "claim_platform_pass": false
+      },
+      "files": [
+        "references/state-protocol.md",
+        "references/usage-examples.md"
+      ]
     }
   ]
 }

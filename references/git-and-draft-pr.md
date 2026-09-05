@@ -1,50 +1,21 @@
 # Git 与 Draft PR 执行规范
 
-## 何时读取
+权限以 risk-and-permissions.md 为准，远程工具与回读见 github-plugin-routing.md。
 
-准备初始化 Git、创建分支、本地提交、push、Draft PR、Merge、Tag 或 Release 前读取，并同时读取 `references/github-plugin-routing.md`。
+## 本地切片
 
-## 目标
+Git 项目中，LEVEL 1/2 每个可验证切片在本切片必要检查通过后创建只含当前任务的本地提交，可使用当前分支含默认分支；LEVEL 3 沿用宿主仓库贡献规则。无 Git 的 L1 以变更记录留痕，git init 另需确认。
 
-允许 Agent 自动完成证据充分的低风险本地 Git 工作，同时避免把用户无关修改、默认分支和公共历史置于自动化风险中。
-
-## 动作矩阵
-
-| 动作 | 默认策略 | 自动执行前提 |
-|---|---|---|
-| 检查状态、分支与 Remote | 允许 | 只读 |
-| `git init` | 人工 Gate | 用户确认初始化当前目录；LEVEL 2 首次初始化时经确认后由 `workflow.py git-init --confirm` 执行，且只暂存工作流基线 |
-| 创建本地功能分支 | 条件允许 | R1/R2、已有任务、仓库有效 |
-| 本地提交 | LEVEL 1/2 必须；LEVEL 3 条件允许 | LEVEL 1/2：修改全在任务范围、验证全部通过、无无关修改，可在当前分支（含默认分支）提交；LEVEL 3：另需 Skill 自有或已接管分支 |
-| push 自有分支 | GitHub 插件确认路径 | 满足本地提交条件、范围配置开启、Remote 与身份已确认，再取得动作时确认 |
-| 创建或更新 Draft PR | GitHub 插件确认路径 | push 条件成立、范围配置开启，再取得动作时确认 |
-| 写入默认分支的远程动作 | 禁止自动执行 | 改为功能分支与 PR 流程；LEVEL 1/2 的默认分支本地提交不受此条限制 |
-| 删除远端分支、转 Ready、Merge、Tag、Release | GitHub 插件确认路径 | 纳入合并后的远程计划，用户明确确认后由插件执行并回读 |
-| 版本更新与交付提交 | LEVEL 1/2 条件允许 | `version-bump` dry-run 展示分级依据与目标版本，并入交付计划经用户确认后 `--apply`；只提交版本文件与 `CHANGELOG.md`，见 `release-versioning.md` |
-| Force Push、改写公共历史 | 永久禁止 | Gate 不得覆盖 |
-
-## LEVEL 1/2 切片提交纪律
-
-每个最小可验证切片在验证全部通过后，必须立即创建只包含当前任务文件的本地提交，形成可追踪、可回滚的基线；未验证不提交，也不把多个切片攒成一个提交。提交前后各运行一次 `workflow.py git-policy --action local_commit` 核对范围与验证判定。LEVEL 1/2 允许直接提交到当前分支（含 `main` 等默认分支），但 push、Draft PR 等远程动作仍必须走 GitHub 插件确认路径。LEVEL 3 沿用宿主仓库的分支与提交规则，不套用本节。
-
-## 范围判定
-
-`current_task.paths` 应列出本轮允许修改的文件或目录。提交前将 `git status --porcelain` 的全部修改与该清单比较；只要存在无关文件，就停止并报告，不能通过 `git add -A` 绕过范围检查。
+current_task.paths 声明本轮范围。提交前检查全部修改、暂存区和 Diff，不提交用户无关修改；有用户预先暂存内容时暂停自动提交。运行 git-policy --action local_commit 检查资格。提交后用 git show --stat/--name-status 检查刚创建的提交与剩余工作区，不再次调用要求存在未提交修改的 local_commit 判定。
 
 ## 验证证据
 
-本地提交至少需要一条状态为 `passed`、`pass`、`ok`、`success`、`成功` 或 `通过` 的验证记录，且所有记录都必须通过。推送和 Draft PR 使用同一批验证证据，并再次展示：
+用 workflow.py verify --project <项目> -- <命令及参数> 执行必要检查。记录实际退出码、时间、命令、任务标识和项目文件指纹。同一命令重试更新当前结果，其他失败检查仍阻止提交。旧记录保留历史用途；不同任务或内容的 passed 不能授权当前操作。
 
-- Remote 名称与 URL。
-- 当前分支和默认分支。
-- 待推送提交数与提交摘要。
-- 修改文件范围。
-- 验证命令与结果。
+git-policy 是辅助检查，不是真实用户授权，也不是系统权限边界。未运行的目标平台和集中验收在待验证记录中注明，不用伪造 passed 绕过检查。
 
-## 身份与远端确认
+## 远程交付
 
-工作流 CLI 不猜测 GitHub 登录状态。Agent 应优先通过 Codex GitHub 插件确认身份、仓库和远端状态，再把事实传给策略检查。认证信息、Token 和密钥不得写入状态文件。`allow_push_own_branch` 与 `allow_create_draft_pr` 只表示范围配置，不是动作时批准。
+push 自有分支和 Draft PR 的 allow_push_own_branch / allow_create_draft_pr 仅为范围配置。检查身份、仓库、分支、提交与证据后，仍需执行前确认。已提交且工作区干净是正常交付状态，不要求制造新的修改。
 
-## Qima
-
-Qima 只作为可选提醒：在需求不清、任务范围存在争议或准备进入高影响 Gate 时，可以提醒用户手动使用。不得由本 Skill 自动调用。
+删除远程分支、转 Ready、Merge、Tag、Release、公开评论进入具体动作计划；默认分支不自动直推，Force Push 和改写公共历史禁止。Qima 仅可提醒用户手动考虑，不自动调用。

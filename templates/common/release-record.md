@@ -7,11 +7,11 @@
 
 ## 版本
 
-<!-- 公共版本使用 X.X 或 X.Y.Z；Git Tag 使用 vX.X。 -->
+<!-- 公共版本使用 X.X 或 X.Y.Z；Tag 按项目约定且仅在需要时创建。 -->
 
 ## 版本来源与分级依据
 
-<!-- 记录 version-bump 的版本来源文件（VERSION/package.json/pyproject.toml/Cargo.toml）、改动分级（major/minor/patch）与分级依据（Tag 范围内的提交分类、R3/R4 强制 major 等）。 -->
+<!-- 记录 version-bump 的版本来源文件（VERSION/package.json/pyproject.toml/Cargo.toml）、改动分级（major/minor/patch）与分级依据（Tag 范围内的提交分类；风险不等于破坏性变化）。 -->
 
 ## 分支与提交
 
@@ -27,7 +27,7 @@
 
 ## 远端证据
 
-<!-- 记录 PR、Merge、Tag、Release URL 与 GitHub 插件回读结果。 -->
+<!-- 记录 实际使用的 PR、Merge、Tag、Release URL 与工具回读；不适用写明理由。 -->
 
 ## 已知限制与未验证项
 

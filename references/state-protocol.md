@@ -43,7 +43,7 @@ docs/elx-level/
 
 ## 状态迁移
 
-ELX Level 2.0 只允许 `migrate` 从旧 `.project-workflow` 一次性复制到 `.elx-level`；旧目录保持不变。其他命令发现只有旧目录时必须停止并提示运行 `migrate`，不得隐式复制。新旧状态目录并存时必须停止并要求人工核对，不覆盖任何一方。迁移后的状态摘要写入 `docs/elx-level/STATUS.md`。
+ELX Level 2.0 只允许 `migrate` 从旧 `.project-workflow` 一次性复制到 `.elx-level`；旧目录保持不变。其他命令发现只有旧目录时必须停止并提示运行 `migrate`，不得隐式复制。新旧状态目录并存时验证 history 的 legacy_state_retained 来源摘要；来源匹配视为已迁移保留副本，允许重复检查。无记录或来源变化时停止要求人工核对，不覆盖任何一方。旧版已迁移但没有来源记录时不能自动认领。迁移后的状态摘要写入 `docs/elx-level/STATUS.md`。
 
 Schema `1.1.0` / workflow `0.4.0` 迁移到 `2.0` / `2.0` 时保持 LEVEL 1–4 不变；LEVEL 1–3 不新增语义 Gate，LEVEL 4 保持分析阶段并进入 `level4-execution-review`。
 
@@ -77,3 +77,19 @@ Schema `1.1.0` / workflow `0.4.0` 迁移到 `2.0` / `2.0` 时保持 LEVEL 1–4 
 6. 当前人工 Gate（存在时）。
 7. 最近等级迁移记录。
 8. 推荐选择及批准后的下一步。
+
+## 当前任务与验证证据
+
+current_task 是对象或 null，使用 id、summary/title、scope、paths、out_of_scope 和 next_step 定位工作。修改任务时保留历史记录、备份有效状态并刷新 STATUS。stage、project_id 必须非空，时间必须带时区；路径不能越出项目。校验不把旧 evidence 自动升级为新证明。
+
+```text
+python "<Skill包目录>/scripts/workflow.py" verify --project <项目根目录> -- python -m unittest
+```
+
+verify 无 Shell 地执行用户授权范围内的验证命令，记录实际退出码、时间、任务标识和 Git 可见文件指纹。Git 忽略文件、外部服务和目标平台状态不由指纹证明，仍需对应检查。不要在命令参数放密钥。非 Git 项目记录人工验证，初始化 Git 须另行确认。
+
+同一任务、同一内容、同一命令重试以最近结果为准；其他当前失败仍阻止提交。旧任务、旧内容的证据保留历史用途。状态/STATUS 本身不计入代码指纹，任务范围变化由任务标识检测。只有适用必要检查均完成，Agent 才能提交或声明完成。
+
+状态由单个执行者维护。STATUS 是生成摘要，人工细节写当前任务或变更记录，再刷新；不要在生成文件中独立维护第二份事实。
+
+Schema 中 x-current-workflow-version 声明当前包版本，workflow_version 字段允许历史格式；CLI 使用同一 Schema 做结构校验，并拒绝未来版本自动降级。旧验证记录可以读取，但须重新执行当前检查才能用于交付。

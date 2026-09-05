@@ -6,7 +6,7 @@
 
 ## 加载矩阵
 
-| LEVEL | PVS 范围 | 默认模板 | 边界 |
+| LEVEL | PVS 范围 | 模板职责 | 边界 |
 | --- | --- | --- | --- |
 | 1 | 可追溯核心、稳定认知、演进记录 | PVS Ledger + LEVEL 1 记忆模板 | 不为小切片铺大型方案 |
 | 2 | 完整 PVS、两份 references 与 governance starter | `templates/template-map.json` | Phase 完成不自动形成审批 Gate |
@@ -15,13 +15,13 @@
 
 ## LEVEL 1：可追溯核心与完整记忆
 
-LEVEL 1 使用 PVS 可追溯核心支持快速开发，同时保留完整项目记忆。必须保留：
+LEVEL 1 使用 PVS 可追溯核心支持快速开发，同时保留完整项目记忆。按需覆盖以下职责，可合并文档、不创建空台账：
 
 - 读取项目规则和已有 README/文档，不能跳过 `AGENTS.md` 等约定。
 - 根目录 `AGENTS.md`：行为规则、文档优先级和入口索引。
 - 根目录 `DOCUMENT_MAP.md`：真实文档路径索引，不承载业务事实。
 - Project Brief、架构和模块事实：目标、范围冻结、核心路径、调用、数据、构建与交付。
-- Requirements、Decisions、Progress Ledger，以及轻量 Change/Progress Record。
+- 一处轻量 Change/Progress Record；首次需要时再建 Requirements、Decisions、Progress Ledger。
 - `docs/elx-level/STATUS.md`、`.elx-level/state.json` 和状态备份。
 - 必要的决策和待验证事项；未运行的检查只能记录为待验证。
 
@@ -29,7 +29,7 @@ LEVEL 1 使用 PVS 可追溯核心支持快速开发，同时保留完整项目�
 
 ## LEVEL 2：完整 PVS
 
-完整加载包内 `core/project-vibe-spec/PVS.md`、两份 references 和 governance starter，执行接管、需求、设计、数据、决策、进度、验证和交付流程：
+按受影响职责加载包内 `core/project-vibe-spec/PVS.md`、两份 references 和 governance starter，执行接管、需求、设计、数据、决策、进度、验证和交付流程：
 
 - 复用或维护 `AGENTS.md`、`DOCUMENT_MAP.md` 和已有事实文档。
 - 维护 PDD/PRD、Requirements/LEDGER.md、详细 REQ、决策记录和进度记录。

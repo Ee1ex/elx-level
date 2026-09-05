@@ -59,7 +59,7 @@ python "$ProjectPath\.codex\skills\elx-level\scripts\workflow.py" status --proje
 | **3** 🤝 | 已有、团队与开源项目改进 | 参与他人、团队、公司或开源仓库 | 复用 Issue、PR、CHANGELOG、ADR；只补项目地图、Change Record、基线、回归与交接 |
 | **4** 🎛️ | 复杂自动化参考与路由 | 大型产品、多系统编排、复杂自动化和多人协作 | 先分析，负责人确认后可实施；十节点作参考，外部专业 Skill 只路由、不内嵌 |
 
-**选择顺序**：已有或协作仓库优先 LEVEL 3 → 需要线上运行和持续运营选 LEVEL 2 → 离线、静态或可下载交付物默认 LEVEL 1 → 大型多系统编排再考虑 LEVEL 4。
+**选择顺序**以 [LEVEL.md](LEVEL.md) 为唯一权威：参与他人贡献流程 → 复杂系统边界分析 → 自有持续运营 → 离线/静态交付。项目等级不替代本次任务的记录粒度。
 
 > 💡 **“以后会更新” ≠ “持续运营”。** 重新打包或上传静态版本通常仍是 LEVEL 1；只有长期承担可用性、用户、权限、数据、发布和支持责任时，才进入 LEVEL 2。
 
@@ -70,7 +70,7 @@ python "$ProjectPath\.codex\skills\elx-level\scripts\workflow.py" status --proje
 1. **责任决定深度。** 先判断你是在快速构建、持续运营、改进已有仓库，还是编排复杂自动化。
 2. **风险决定暂停点。** LEVEL 1–3 对用户只展示 `AUTO`、`CONFIRM`、`MANUAL_ONLY`；普通实现、测试和本地提交不形成 Gate。
 3. **证据形成记忆。** 目标、架构和当前事实保持稳定；决定、修改和验证持续累积，下一次可以从事实继续。
-4. **公开交付单独确认。** Push、PR、Merge、Tag 和 Release 自动路由 Codex GitHub 插件，执行前集中确认，完成后远端回读验证。
+4. **公开交付单独确认。** 按需执行远端动作，执行前集中确认，完成后远端回读验证。Codex 优先 GitHub 插件，其他平台可声明已有且获准的连接器或 CLI；Tag 与 Release 遵循仓库约定。
 
 ## 🧠 双层项目记忆
 
@@ -91,7 +91,7 @@ LEVEL 1 同时建立两层记忆，但小功能、小修改只需要 Progress/Ch
 
 🚫 **永久禁止**：Force Push、改写公共历史。
 
-🔁 **所有 LEVEL 的 GitHub 交付使用同一契约**：插件先只读核对远端，给出分支、提交、文件范围、测试证据、PR、Merge、Tag/Release、回滚和未验证项，再请求一次远程操作确认。**成功提示不等于完成** —— 必须用 GitHub 插件回读结果。
+🔁 **所有 LEVEL 的 GitHub 交付使用同一契约**：插件先只读核对远端，给出分支、提交、文件范围、测试证据、PR、Merge、Tag/Release、回滚和未验证项，再请求一次远程操作确认。**成功提示不等于完成** —— 必须通过所选工具回读结果；Codex 优先使用 GitHub 插件，其他平台可声明同等治理的替代工具。
 
 ## 📦 安装到你的平台
 
@@ -111,11 +111,11 @@ LEVEL 1 同时建立两层记忆，但小功能、小修改只需要 Progress/Ch
 
 ## 🔄 从旧版本迁移
 
-- 📦 `migrate` 会把旧 `.project-workflow` 完整复制到 `.elx-level`，保留旧目录不变；新旧目录并存时停止且不覆盖。
+- 📦 `migrate` 会把旧 `.project-workflow` 完整复制到 `.elx-level`，保留旧目录不变；已迁移且来源摘要匹配时允许并存；没有对应记录或来源变化时停止且不覆盖。
 - 🔢 `0.4.0` 的 LEVEL 1–4 保持原数字，其中旧 LEVEL 4 仍停在分析边界并等待执行确认；更老状态按协议迁移：旧 LEVEL 1 → 新 LEVEL 1、旧 LEVEL 2 → 新 LEVEL 3、旧 LEVEL 3 → 新 LEVEL 4。
 - 💾 迁移前会写入 `state.backup.json`，并在 `STATUS.md` 记录旧/新版本、等级和原因。
 
-当前公共版本为 `2.1`，Git Tag 目标为 `v2.1`。
+当前公共版本为 `2.1`，本仓库不创建 GitHub Release，Git Tag 保持现状；未发布改进见 CHANGELOG。
 
 ## 🗂️ 仓库结构
 
@@ -150,3 +150,5 @@ python scripts/workflow.py validate-package --package-root .
 <div align="center">
 <sub><b>ELX Level</b> —— 选择刚好的流程强度，保留完整项目记忆 · <a href="#-elx-level">⬆ 返回顶部</a></sub>
 </div>
+
+方案 B（未发布）：按任务影响选择记录粒度；替换安装前校验暂存包；验证证据绑定当前任务和内容。完整规则与示例见 [文档契约](references/documentation-contract.md) 和 [使用场景](references/usage-examples.md)。

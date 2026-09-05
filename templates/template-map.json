@@ -1,24 +1,188 @@
 {
   "version": 1,
   "roles": [
-    {"name": "project_contract", "levels": [1, 2], "default": "core/project-vibe-spec/assets/governance-starter/AGENTS.md.template", "compatibility": []},
-    {"name": "document_map", "levels": [1, 2], "default": "core/project-vibe-spec/assets/governance-starter/DOCUMENT_MAP.md.template", "compatibility": ["templates/level2/project-map.md"]},
-    {"name": "requirements_ledger", "levels": [1, 2], "default": "core/project-vibe-spec/assets/governance-starter/Requirements/LEDGER.md.template", "compatibility": []},
-    {"name": "requirement_record", "levels": [2], "default": "core/project-vibe-spec/assets/governance-starter/Requirements/REQ-YYYYMMDD-NNN.md.template", "compatibility": ["templates/level2/requirements.md"]},
-    {"name": "decision_ledger", "levels": [1, 2], "default": "core/project-vibe-spec/assets/governance-starter/Decisions/LEDGER.md.template", "compatibility": []},
-    {"name": "decision_record", "levels": [2], "default": "core/project-vibe-spec/assets/governance-starter/Decisions/DEC-YYYYMMDD-NNN.md.template", "compatibility": ["templates/level2/decision-record.md"]},
-    {"name": "bug_tracker", "levels": [2], "default": "core/project-vibe-spec/assets/governance-starter/docs/BUG_TRACKER.md.template", "compatibility": []},
-    {"name": "pdd", "levels": [2], "default": "core/project-vibe-spec/assets/governance-starter/docs/PDD.md.template", "compatibility": []},
-    {"name": "prd", "levels": [2], "default": "core/project-vibe-spec/assets/governance-starter/docs/PRD.md.template", "compatibility": ["templates/level2/prd.md", "templates/level2/tech-spec.md"]},
-    {"name": "prototype_demo", "levels": [2], "default": "templates/level2/demo.md", "compatibility": []},
-    {"name": "ui_guide", "levels": [2], "default": "core/project-vibe-spec/assets/governance-starter/docs/UI_GUIDE.md.template", "compatibility": []},
-    {"name": "business_flow", "levels": [2], "default": "core/project-vibe-spec/assets/governance-starter/docs/BUSINESS_FLOW.md.template", "compatibility": []},
-    {"name": "project_progress", "levels": [2], "default": "core/project-vibe-spec/assets/governance-starter/docs/PROGRESS.md.template", "compatibility": []},
-    {"name": "feature_progress_ledger", "levels": [1, 2], "default": "core/project-vibe-spec/assets/governance-starter/Progress/LEDGER.md.template", "compatibility": []},
-    {"name": "feature_progress_record", "levels": [2], "default": "core/project-vibe-spec/assets/governance-starter/Progress/PROG-REQ-YYYYMMDD-NNN-slug.md.template", "compatibility": ["templates/level2/task.md"]},
-    {"name": "project_architecture", "levels": [1, 2, 3], "default": "templates/level1/architecture.md", "compatibility": []},
-    {"name": "change_record", "levels": [1, 2, 3], "default": "templates/common/change-record.md", "compatibility": ["templates/level3/change-proposal.md"]},
-    {"name": "release_record", "levels": [1, 2, 3, 4], "default": "templates/common/release-record.md", "compatibility": []},
-    {"name": "level1_progress_record", "levels": [1], "default": "templates/level1/progress-record.md", "compatibility": []}
+    {
+      "name": "project_contract",
+      "levels": [
+        1,
+        2
+      ],
+      "default": "core/project-vibe-spec/assets/governance-starter/AGENTS.md.template",
+      "compatibility": []
+    },
+    {
+      "name": "document_map",
+      "levels": [
+        1,
+        2
+      ],
+      "default": "core/project-vibe-spec/assets/governance-starter/DOCUMENT_MAP.md.template",
+      "compatibility": [
+        "templates/level2/project-map.md"
+      ]
+    },
+    {
+      "name": "requirements_ledger",
+      "levels": [
+        1,
+        2
+      ],
+      "default": "core/project-vibe-spec/assets/governance-starter/Requirements/LEDGER.md.template",
+      "compatibility": []
+    },
+    {
+      "name": "requirement_record",
+      "levels": [
+        1,
+        2
+      ],
+      "default": "core/project-vibe-spec/assets/governance-starter/Requirements/REQ-YYYYMMDD-NNN.md.template",
+      "compatibility": [
+        "templates/level2/requirements.md"
+      ]
+    },
+    {
+      "name": "decision_ledger",
+      "levels": [
+        1,
+        2
+      ],
+      "default": "core/project-vibe-spec/assets/governance-starter/Decisions/LEDGER.md.template",
+      "compatibility": []
+    },
+    {
+      "name": "decision_record",
+      "levels": [
+        1,
+        2
+      ],
+      "default": "core/project-vibe-spec/assets/governance-starter/Decisions/DEC-YYYYMMDD-NNN.md.template",
+      "compatibility": [
+        "templates/level2/decision-record.md"
+      ]
+    },
+    {
+      "name": "bug_tracker",
+      "levels": [
+        2
+      ],
+      "default": "core/project-vibe-spec/assets/governance-starter/docs/BUG_TRACKER.md.template",
+      "compatibility": []
+    },
+    {
+      "name": "pdd",
+      "levels": [
+        2
+      ],
+      "default": "core/project-vibe-spec/assets/governance-starter/docs/PDD.md.template",
+      "compatibility": [
+        "templates/level2/prd.md"
+      ]
+    },
+    {
+      "name": "prd",
+      "levels": [
+        2
+      ],
+      "default": "core/project-vibe-spec/assets/governance-starter/docs/PRD.md.template",
+      "compatibility": [
+        "templates/level2/tech-spec.md"
+      ]
+    },
+    {
+      "name": "prototype_demo",
+      "levels": [
+        2
+      ],
+      "default": "templates/level2/demo.md",
+      "compatibility": []
+    },
+    {
+      "name": "ui_guide",
+      "levels": [
+        2
+      ],
+      "default": "core/project-vibe-spec/assets/governance-starter/docs/UI_GUIDE.md.template",
+      "compatibility": []
+    },
+    {
+      "name": "business_flow",
+      "levels": [
+        2
+      ],
+      "default": "core/project-vibe-spec/assets/governance-starter/docs/BUSINESS_FLOW.md.template",
+      "compatibility": []
+    },
+    {
+      "name": "project_progress",
+      "levels": [
+        2
+      ],
+      "default": "core/project-vibe-spec/assets/governance-starter/docs/PROGRESS.md.template",
+      "compatibility": []
+    },
+    {
+      "name": "feature_progress_ledger",
+      "levels": [
+        1,
+        2
+      ],
+      "default": "core/project-vibe-spec/assets/governance-starter/Progress/LEDGER.md.template",
+      "compatibility": []
+    },
+    {
+      "name": "feature_progress_record",
+      "levels": [
+        1,
+        2
+      ],
+      "default": "core/project-vibe-spec/assets/governance-starter/Progress/PROG-REQ-YYYYMMDD-NNN-slug.md.template",
+      "compatibility": [
+        "templates/level2/task.md"
+      ]
+    },
+    {
+      "name": "project_architecture",
+      "levels": [
+        1,
+        2,
+        3
+      ],
+      "default": "templates/level1/architecture.md",
+      "compatibility": [],
+      "optional_separate_file": true
+    },
+    {
+      "name": "change_record",
+      "levels": [
+        1,
+        2,
+        3
+      ],
+      "default": "templates/common/change-record.md",
+      "compatibility": [
+        "templates/level3/change-proposal.md"
+      ]
+    },
+    {
+      "name": "release_record",
+      "levels": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "default": "templates/common/release-record.md",
+      "compatibility": []
+    },
+    {
+      "name": "level1_progress_record",
+      "levels": [
+        1
+      ],
+      "default": "templates/level1/progress-record.md",
+      "compatibility": [],
+      "usage": "compatibility_only"
+    }
   ]
 }

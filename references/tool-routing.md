@@ -26,10 +26,10 @@
 
 ## GitHub
 
-- 所有 LEVEL 的远程交付读取 `references/github-plugin-routing.md`，自动选择 Codex GitHub 插件。
+- 所有 LEVEL 的远程交付读取 `references/github-plugin-routing.md`，Codex 优先选择 GitHub 插件，其他平台可声明现有 CLI/连接器并遵循相同批准与回读要求。
 - 插件先只读核对仓库、身份、分支、PR、Tag 和 Release；本地范围配置不替代远程动作时确认。
 - push、Draft PR、Merge、Tag 和 Release 先合并为一次动作计划，明确确认后执行并远端回读验证。
-- 插件不可用时说明安装或连接要求，不静默切换到不受治理的远程写入方式。
+- 插件不可用时说明安装或连接要求，可声明受同样治理的替代工具；没有连接则保留待执行计划。
 
 ## Windows 命令
 

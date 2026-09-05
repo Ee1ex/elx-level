@@ -59,7 +59,7 @@ Initialization creates `.elx-level/state.json` and `docs/elx-level/STATUS.md`. O
 | **3** 🤝 | Existing, team, and open-source project improvement | Other people's, team, company, or open-source repositories | Reuse Issues, PRs, CHANGELOG, and ADRs; add only a project map, Change Record, baseline, regression evidence, and handoff |
 | **4** 🎛️ | Complex automation reference and routing | Large products, multi-system orchestration, complex automation, and multi-person collaboration | Analyze first, implement after owner confirmation; ten nodes as reference, external Skills routed but never embedded |
 
-**Decision order**: existing or collaborative repositories prefer LEVEL 3 → online services with ongoing responsibility choose LEVEL 2 → offline, static, or downloadable deliverables default to LEVEL 1 → large multi-system orchestration considers LEVEL 4.
+**Decision order**: contributing to a repository governed by others selects LEVEL 3 → large multi-system orchestration selects LEVEL 4 → your own ongoing operational responsibility selects LEVEL 2 → other deliverables default to LEVEL 1. Publishing your own project as open source does not alone make it LEVEL 3.
 
 > 💡 **"Updated often" ≠ "continuously operated."** Repackaging a download or updating a static page usually remains LEVEL 1; only long-term responsibility for availability, users, permissions, data, releases, and support moves the project into LEVEL 2.
 
@@ -70,7 +70,7 @@ Initialization creates `.elx-level/state.json` and `docs/elx-level/STATUS.md`. O
 1. **Responsibility sets the depth.** First decide whether you are building quickly, operating continuously, improving an existing repository, or orchestrating complex automation.
 2. **Risk sets the pause point.** LEVEL 1–3 expose only `AUTO`, `CONFIRM`, and `MANUAL_ONLY`; routine implementation, tests, and local commits are not gates.
 3. **Evidence becomes memory.** Goals, architecture, and current facts stay stable while decisions, changes, and verification accumulate, so the next session continues from facts.
-4. **Public delivery is confirmed separately.** Push, PR, Merge, Tag, and Release route automatically to the Codex GitHub plugin, receive one consolidated confirmation before execution, and are verified by reading GitHub back afterward.
+4. **Public delivery is confirmed separately.** Requested remote actions receive consolidated confirmation and remote read-back. Codex prefers its GitHub plugin; other platforms may declare an available approved connector or CLI. Tag and Release are optional, subject to repository rules.
 
 ## 🧠 Two-Layer Project Memory
 
@@ -91,7 +91,7 @@ The complete governance rules and starter templates are embedded in [`core/proje
 
 🚫 **Permanently forbidden**: Force Push and rewriting public history.
 
-🔁 **Every LEVEL uses the same GitHub delivery contract**: the plugin first reads the remote state read-only and presents the branch and commits, file scope, test evidence, PR, Merge, Tag/Release, rollback, and unverified items before requesting one remote-operation confirmation. **A success message is not completion** — the result must be read back through the GitHub plugin.
+🔁 **Every LEVEL uses the same GitHub delivery contract**: the declared GitHub tool first reads the remote state read-only and presents the branch and commits, file scope, test evidence, PR, Merge, Tag/Release, rollback, and unverified items before requesting one remote-operation confirmation. **A success message is not completion** — the result must be read back through the declared tool.
 
 ## 📦 Install on Your Platform
 
@@ -111,11 +111,11 @@ Adapters reference only the current LEVEL, state, and layering strategy instead 
 
 ## 🔄 Migrating from Older Versions
 
-- 📦 `migrate` copies the complete legacy `.project-workflow` directory to `.elx-level` and leaves the source unchanged; if both directories exist, it stops without overwriting either.
+- 📦 `migrate` copies the complete legacy `.project-workflow` directory to `.elx-level` and leaves the source unchanged; when both directories exist, only a recorded matching migration-source digest permits reuse; otherwise it stops without overwriting either.
 - 🔢 LEVEL 1–4 from `0.4.0` keep their numeric meaning, while the old LEVEL 4 remains at its analysis boundary awaiting execution confirmation; older states migrate by protocol: old LEVEL 1 → new LEVEL 1, old LEVEL 2 → new LEVEL 3, and old LEVEL 3 → new LEVEL 4.
 - 💾 Before migrating, a `state.backup.json` is written and `STATUS.md` records the old/new level, schema, and reason.
 
-The current public version is `2.1`, with Git Tag target `v2.1`.
+The public version remains `2.1`. This repository does not create GitHub Releases or automatically change tags. Unreleased improvements are recorded in CHANGELOG.
 
 ## 🗂️ Repository Layout
 
@@ -150,3 +150,5 @@ This project is released under the [MIT License](LICENSE).
 <div align="center">
 <sub><b>ELX Level</b> — choose the right workflow intensity and keep the full project memory · <a href="#-elx-level">⬆ Back to top</a></sub>
 </div>
+
+Plan B (unreleased): documentation scales with task impact; installed packages are validated before replacement. Verification evidence is bound to the current task and content. Retained legacy state is accepted only with a matching migration-source digest. Codex prefers the GitHub plugin; other platforms may declare equivalent approved tools.

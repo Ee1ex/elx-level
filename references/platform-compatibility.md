@@ -36,8 +36,12 @@
 
 ## 状态迁移
 
-适配器读取迁移后的状态，不自行推断旧数字含义。旧 LEVEL 1/2/3 迁移为新 LEVEL 1/3/4；迁移后以 `level-migration-review` 作为待人工确认 Gate。旧 LEVEL 3 改新 LEVEL 2 必须由迁移命令提供用户重确认记录。
+适配器读取迁移后的状态，不自行推断旧数字含义。Schema 1.1.0 保持 LEVEL 数字；更老状态按 1→1、2→3、3→4 映射并进入 level-migration-review。显式改新 LEVEL 2 需批准记录；具体以 state-protocol.md 为准。
 
 ## 降级
 
 平台不支持自动 Skill 发现时，用户显式引用项目规则或 `SKILL.md`。平台没有某个 Plugin 时走通用流程。任何平台都不能把指令文件视为操作系统级权限边界。
+
+## 安装与项目路径
+
+适配器显式标出 Skill 包位置。项目内安装使用相对项目根目录的路径，可随整个项目移动；用户级安装使用本机位置，换主机后重新运行 render-adapter。所有命令从项目根目录执行，不能把宿主 scripts/workflow.py 当作本 Skill 脚本。安装清单唯一来源为 package-files.json，替换前校验暂存包；历史 docs 不属于运行时依赖。
