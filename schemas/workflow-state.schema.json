@@ -140,5 +140,5 @@
     }
   },
   "additionalProperties": false,
-  "x-current-workflow-version": "2.1"
+  "x-current-workflow-version": "2.2"
 }

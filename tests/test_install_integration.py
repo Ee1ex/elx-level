@@ -56,7 +56,7 @@ class InstallIntegrationTests(unittest.TestCase):
                 "templates/level1/project-brief.md",
             ):
                 self.assertTrue((installed / relative).is_file(), relative)
-            self.assertEqual((installed / "VERSION").read_text(encoding="utf-8").strip(), "2.1")
+            self.assertEqual((installed / "VERSION").read_text(encoding="utf-8").strip(), "2.2")
             for action in ("doctor", "validate-package"):
                 check = subprocess.run([sys.executable, str(installed / "scripts/workflow.py"), action,
                                         "--package-root", str(installed)], capture_output=True, text=True, encoding="utf-8")

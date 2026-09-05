@@ -1,5 +1,7 @@
 # ELX Level 当前文档地图
 
+当前版本交付状态见 [2.2 交付记录](docs/release/2.2-readiness.md)，推送说明见 [提交正文](docs/release/2.2-push-description.md)。
+
 ## 接手顺序
 
 先读 AGENTS.md，再读本索引；当前方案 B 的结果和待验证项位于 docs/plan-b-results.md。实现从 scripts/workflow.py、package-files.json 和 tests/test_reliability_regressions.py 进入。

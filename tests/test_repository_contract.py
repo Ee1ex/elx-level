@@ -7,6 +7,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 README_HEADINGS = {
     "README.md": [
+        "🆕 2.2 更新：小任务更轻，过程更可靠",
         "✨ 它解决什么问题",
         "⚡ 3 分钟快速开始",
         "🎚️ 四级模型：按责任选强度",
@@ -20,6 +21,7 @@ README_HEADINGS = {
         "📄 许可证",
     ],
     "README.en.md": [
+        "🆕 2.2 update: lighter tasks, more reliable records",
         "✨ What Problem It Solves",
         "⚡ Quick Start in 3 Minutes",
         "🎚️ The Four-Level Model: Intensity by Responsibility",
@@ -120,10 +122,10 @@ class RepositoryContractTests(unittest.TestCase):
     def test_version_uses_two_numeric_segments(self):
         version = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
         self.assertRegex(version, re.compile(r"^\d+\.\d+$"))
-        self.assertEqual(version, "2.1")
+        self.assertEqual(version, "2.2")
 
-    def test_public_identity_is_elx_level_2_1(self):
-        self.assertEqual((ROOT / "VERSION").read_text(encoding="utf-8").strip(), "2.1")
+    def test_public_identity_is_elx_level_2_2(self):
+        self.assertEqual((ROOT / "VERSION").read_text(encoding="utf-8").strip(), "2.2")
         skill = (ROOT / "SKILL.md").read_text(encoding="utf-8")
         self.assertIn("name: elx-level", skill)
         self.assertIn("ELX Level", skill)
@@ -224,7 +226,7 @@ class RepositoryContractTests(unittest.TestCase):
             "CONFIRM",
             "MANUAL_ONLY",
             "GitHub 插件",
-            "当前公共版本为",
+            "当前版本为",
         ):
             self.assertIn(phrase, readme)
         self.assertIn("负责人确认后可实施", readme)
