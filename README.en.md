@@ -64,7 +64,7 @@ Initialization creates `.elx-level/state.json` and `docs/elx-level/STATUS.md`. O
 | LEVEL | 🧭 Responsibility mode | 🎯 Best suited to | ⚙️ Default approach |
 | :---: | --- | --- | --- |
 | **1** 🚀 | Fast development with complete project memory | Offline tools, scripts, Skills, plugins, mods, prototypes, static pages, and versioned downloads | Implement → run → observe → adjust; small changes leave lightweight records |
-| **2** 🛰️ | Complete PVS for continuous operations | Products where you own accounts, permissions, cloud data, services, deployment, backup, rollback, monitoring, or support | Full embedded PVS; `Phase 0 → Phase N`, scope freeze, and DoD, with routine phases continuing automatically |
+| **2** 🛰️ | Complete PVS for continuous operations | Products where you own accounts, permissions, cloud data, services, deployment, backup, rollback, monitoring, or support | Full applicable PVS responsibilities, loaded per task; `Phase 0 → Phase N`, scope freeze, and DoD, with routine phases continuing automatically |
 | **3** 🤝 | Existing, team, and open-source project improvement | Other people's, team, company, or open-source repositories | Reuse Issues, PRs, CHANGELOG, and ADRs; add only a project map, Change Record, baseline, regression evidence, and handoff |
 | **4** 🎛️ | Complex automation reference and routing | Large products, multi-system orchestration, complex automation, and multi-person collaboration | Analyze first, implement after owner confirmation; ten nodes as reference, external Skills routed but never embedded |
 
@@ -90,7 +90,9 @@ Project memory is not a document count. It means two kinds of information stay r
 - 🏛️ The **stable cognition layer** answers "What is the project now?": goals, scope, critical paths, architecture, modules, calls, data, dependencies, build, tests, and delivery.
 - 📈 The **evolution record layer** answers "Why did it become this?": Requirements, Decisions, Progress, Bugs, CHANGELOG, Release Records, and verification evidence.
 
-LEVEL 1 establishes both layers while a small feature or edit needs only Progress/Changelog or a lightweight Change Record. LEVEL 2 adopts the full embedded PVS across product, requirements, decisions, business flow, UI, architecture, API, data, permissions, deployment, monitoring, backup, rollback, operations, Bugs, pending verification, and version history. LEVEL 3 reuses existing repository facts instead of creating a parallel documentation tree.
+LEVEL 1 establishes both layers while a small feature or edit needs only Progress/Changelog or a lightweight Change Record. LEVEL 2 retains all applicable product and operational responsibilities of the embedded PVS, reading affected sections and updating changed facts per task; a copy edit does not restart project planning or require a database proposal. LEVEL 3 reuses existing repository facts instead of creating a parallel documentation tree.
+
+Within a session, read changes; in a new session, check rules, state, and the existing task. A new session alone does not require REQ/PROG. After three unsuccessful substantive fixes to the same issue, or cascading regressions, save the stopping point and diagnose again before patching. See the [PVS Bridge](references/project-vibe-spec-bridge.md) for loading conditions and the [execution loop](references/personal-execution-loop.md) for behavior. These rules aim to reduce repeated reading and rework; actual Agent token savings have not been measured.
 
 The complete governance rules and starter templates are embedded in [`core/project-vibe-spec/PVS.md`](core/project-vibe-spec/PVS.md), with responsibilities mapped in [`templates/template-map.json`](templates/template-map.json); installing this package does not require downloading a second PVS Skill.
 

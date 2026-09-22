@@ -64,7 +64,7 @@ python "$ProjectPath\.codex\skills\elx-level\scripts\workflow.py" status --proje
 | LEVEL | 🧭 责任模式 | 🎯 适合什么项目 | ⚙️ 默认做法 |
 | :---: | --- | --- | --- |
 | **1** 🚀 | 快速开发与完整项目记忆 | 离线工具、脚本、Skill、插件、Mod、原型、静态页面、版本化下载物 | 实现 → 运行 → 观察 → 调整；小改动只留轻量记录 |
-| **2** 🛰️ | 完整 PVS 持续运营 | 自己负责账户、权限、云端数据、服务、部署、备份、回滚、监控或支持 | 全量包内 PVS；`Phase 0 → Phase N`、范围冻结和 DoD，普通 Phase 完成后自动继续 |
+| **2** 🛰️ | 完整 PVS 持续运营 | 自己负责账户、权限、云端数据、服务、部署、备份、回滚、监控或支持 | 完整承担适用 PVS 职责，按任务加载；`Phase 0 → Phase N`、范围冻结和 DoD，普通 Phase 完成后自动继续 |
 | **3** 🤝 | 已有、团队与开源项目改进 | 参与他人、团队、公司或开源仓库 | 复用 Issue、PR、CHANGELOG、ADR；只补项目地图、Change Record、基线、回归与交接 |
 | **4** 🎛️ | 复杂自动化参考与路由 | 大型产品、多系统编排、复杂自动化和多人协作 | 先分析，负责人确认后可实施；十节点作参考，外部专业 Skill 只路由、不内嵌 |
 
@@ -90,7 +90,9 @@ python "$ProjectPath\.codex\skills\elx-level\scripts\workflow.py" status --proje
 - 🏛️ **稳定认知层**回答“项目现在是什么”：目标、范围、核心路径、架构、模块、调用、数据、依赖、构建、测试和交付。
 - 📈 **演进记录层**回答“为什么变成这样”：Requirements、Decisions、Progress、Bug、CHANGELOG、Release Record 和验证证据。
 
-LEVEL 1 同时建立两层记忆，但小功能、小修改只需要 Progress/Changelog 或轻量 Change Record。LEVEL 2 全量采用包内 PVS，覆盖产品、需求、决策、业务流、UI、架构、API、数据、权限、部署、监控、备份、回滚、运营、Bug、待验证和版本记录。LEVEL 3 优先复用仓库既有事实，不另建平行文档树。
+LEVEL 1 同时建立两层记忆，但小功能、小修改只需要 Progress/Changelog 或轻量 Change Record。LEVEL 2 承担包内 PVS 的适用产品与运营职责，每次只读取受影响章节、更新变化的事实；改文案不会重走立项或填写数据库方案。LEVEL 3 优先复用仓库既有事实，不另建平行文档树。
+
+同会话续做读取增量，新会话检查规则、状态和原任务；换会话不会自动增加 REQ/PROG。同一问题连续三次实质修复仍未解决或出现连锁回归时，先保留断点并重新诊断。具体加载条件见 [PVS Bridge](references/project-vibe-spec-bridge.md)，执行方式见 [个人执行循环](references/personal-execution-loop.md)。这些规则旨在减少重复读取与返工，尚无真实 Agent token 节省比例。
 
 完整治理规则和 starter 模板内嵌在 [`core/project-vibe-spec/PVS.md`](core/project-vibe-spec/PVS.md)，职责映射见 [`templates/template-map.json`](templates/template-map.json)；安装本包不需要再下载第二个 PVS Skill。
 

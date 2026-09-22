@@ -1,6 +1,6 @@
 # <标题> 功能进度
 
-> 关联需求：`REQ-YYYYMMDD-NNN`
+> 关联需求/Bug：`REQ-YYYYMMDD-NNN` 或已有 BUG ID（二选一；生成文件名沿用对应 ID）
 > 状态：待开始
 > 最后更新：YYYY-MM-DD
 

@@ -5,4 +5,4 @@
 - Git tag 保持现状，不随发布自动创建或删除。
 - 改动纪律：每个主题一个提交，交付前 `python -m unittest discover -s tests` 全部通过，并运行 `doctor` 与 `validate-package`。
 
-- 接手先读 `DOCUMENT_MAP.md`，当前变更与验证见 `docs/plan-b-results.md`；历史方案按需回溯，不当作新任务授权。
+- 接手先读 `DOCUMENT_MAP.md`，当前变更与验证见 `docs/task-efficiency-2026-09-22.md`；历史方案按需回溯，不当作新任务授权。

@@ -386,6 +386,115 @@
         "references/state-protocol.md",
         "references/usage-examples.md"
       ]
+    },
+    {
+      "id": "l1-resume-local-bug",
+      "prompt": "已确认 LEVEL 1；新窗口继续昨天的单模块 Bug，原 BUG 记录已有复现、授权范围和下一步，代码未改。",
+      "expected_output": {
+        "read_current_rules_state_and_code": true,
+        "record": "existing_BUG",
+        "new_REQ_or_PROG_for_session_alone": false,
+        "repeat_scope_approval": false,
+        "claim_old_evidence_as_current": false
+      },
+      "files": ["SKILL.md", "references/documentation-contract.md", "references/state-protocol.md"]
+    },
+    {
+      "id": "l2-copy-no-full-pvs-load",
+      "prompt": "LEVEL 2 已接入，当前任务只是将设置页提交改成保存，行为不变；规则、状态和相关组件已经定位。",
+      "expected_output": {
+        "record": "one_change_entry",
+        "load_full_PVS_or_starter": false,
+        "restart_phase_zero": false,
+        "update_unchanged_product_or_technical_docs": false,
+        "perform_relevant_checks_and_repository_requirements": true
+      },
+      "files": ["LEVEL.md", "references/project-vibe-spec-bridge.md", "references/documentation-contract.md"]
+    },
+    {
+      "id": "l2-small-role-change-is-sensitive",
+      "prompt": "已确认 LEVEL 2，只把新用户的 role 默认值从 user 改为 admin，只有一个字段，按小配置直接做。",
+      "expected_output": {
+        "use_lightweight_bypass": false,
+        "inspect_permission_and_data_impact": true,
+        "confirm_concrete_plan_before_implementation": true,
+        "load_data_and_decision_gates": true,
+        "verify_authorization_failure_paths": true
+      },
+      "files": ["references/project-vibe-spec-bridge.md", "references/risk-and-permissions.md", "core/project-vibe-spec/PVS.md", "core/project-vibe-spec/references/decision-gates.md"]
+    },
+    {
+      "id": "same-session-read-delta",
+      "prompt": "同会话同一已批准任务继续下一步；此前已读规则和相关实现仍在上下文，Git Diff 表明只有本任务已知修改。",
+      "expected_output": {
+        "read_changed_or_newly_affected_facts": true,
+        "reread_all_unchanged_references": false,
+        "reuse_verification_without_checking_freshness": false
+      },
+      "files": ["SKILL.md", "references/documentation-contract.md", "references/personal-execution-loop.md"]
+    },
+    {
+      "id": "context-missing-or-rules-changed",
+      "prompt": "会话压缩后无法确认读过的规则；用户也更新了 AGENTS.md，并切换 checkout，继续原任务。",
+      "expected_output": {
+        "recheck_checkout_rules_state_and_task": true,
+        "blindly_reuse_cached_context": false,
+        "preserve_recorded_approval_within_unchanged_scope": true
+      },
+      "files": ["SKILL.md", "references/documentation-contract.md"]
+    },
+    {
+      "id": "three-fixes-stop-blind-patching",
+      "prompt": "原 BUG 记录显示同一错误连续三次实质修改都失败了，继续修复；不要改产品范围。",
+      "expected_output": {
+        "stop_speculative_patching": true,
+        "record_attempts_and_reproduce_root_cause": true,
+        "delete_or_weaken_valid_tests": false,
+        "continue_with_new_evidence_within_scope": true,
+        "automatically_require_user_gate": false
+      },
+      "files": ["references/personal-execution-loop.md", "references/usage-examples.md"]
+    },
+    {
+      "id": "repair-loop-cross-session-and-regressions",
+      "prompt": "新窗口接手故障，原记录已有两次失败修复；第三次又引入其他模块回归。现在想修改数据库结构来绕开问题。",
+      "expected_output": {
+        "reset_attempt_count_for_new_session": false,
+        "reassess_root_cause_before_patching": true,
+        "confirm_changed_data_plan_before_implementation": true
+      },
+      "files": ["references/personal-execution-loop.md", "core/project-vibe-spec/references/decision-gates.md"]
+    },
+    {
+      "id": "ordinary-new-file-within-scope",
+      "prompt": "已批准功能需要在原模块新增一个辅助文件，无新依赖、无公共契约或数据权限变化，继续完成。",
+      "expected_output": {
+        "continue_within_approved_scope": true,
+        "ask_for_each_new_file": false,
+        "review_diff_and_verify": true
+      },
+      "files": ["references/personal-execution-loop.md", "references/risk-and-permissions.md"]
+    },
+    {
+      "id": "post-verify-doc-change",
+      "prompt": "verify 已通过，随后修改了 Git 可见的产品文档；代码没变，可以直接沿用刚才的验证提交吗？",
+      "expected_output": {
+        "reuse_old_fingerprint_evidence": false,
+        "reestablish_current_verification": true,
+        "weaken_fingerprint_rules": false
+      },
+      "files": ["references/personal-execution-loop.md", "references/state-protocol.md"]
+    },
+    {
+      "id": "cross-module-bug-one-problem-source",
+      "prompt": "LEVEL 2 的 Bug 跨多个读写方，已有 BUG-007，需要分阶段修复并调整兼容方案。",
+      "expected_output": {
+        "record": "BUG+PROG+DEC",
+        "duplicate_bug_as_REQ": false,
+        "inspect_cross_module_behavior": true,
+        "confirm_compatibility_plan": true
+      },
+      "files": ["references/documentation-contract.md", "core/project-vibe-spec/PVS.md", "core/project-vibe-spec/references/document-maintenance.md"]
     }
   ]
 }
