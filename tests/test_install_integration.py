@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 class InstallIntegrationTests(unittest.TestCase):
     @unittest.skipUnless(os.name == "nt" and shutil.which("powershell"), "PowerShell integration test")
-    def test_project_install_is_single_skill_and_preserves_independent_pvs(self) -> None:
+    def test_project_install_preserves_independent_skills_and_adds_only_level(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             project = Path(directory)
             skills = project / ".codex" / "skills"
@@ -20,6 +20,10 @@ class InstallIntegrationTests(unittest.TestCase):
             independent.mkdir(parents=True)
             marker = independent / "keep.txt"
             marker.write_text("keep", encoding="utf-8")
+            oil = skills / "oil-plan"
+            oil.mkdir()
+            original = b"# Independently installed skill\n"
+            (oil / "SKILL.md").write_bytes(original)
             result = subprocess.run(
                 [
                     "powershell", "-NoProfile", "-ExecutionPolicy", "Bypass",
@@ -47,6 +51,7 @@ class InstallIntegrationTests(unittest.TestCase):
                 "assets/readme/workflow.svg",
                 "references/documentation-contract.md",
                 "references/personal-execution-loop.md",
+                "references/oil-dev-skills.md",
                 "references/level4-capability-routing.md",
                 "references/github-plugin-routing.md",
                 "templates/common/change-record.md",
@@ -56,7 +61,9 @@ class InstallIntegrationTests(unittest.TestCase):
                 "templates/level1/project-brief.md",
             ):
                 self.assertTrue((installed / relative).is_file(), relative)
-            self.assertEqual((installed / "VERSION").read_text(encoding="utf-8").strip(), "2.2")
+            self.assertEqual((installed / "VERSION").read_bytes(), (ROOT / "VERSION").read_bytes())
+            self.assertEqual([p.name for p in skills.glob("oil-*")], ["oil-plan"])
+            self.assertEqual((oil / "SKILL.md").read_bytes(), original)
             for action in ("doctor", "validate-package"):
                 check = subprocess.run([sys.executable, str(installed / "scripts/workflow.py"), action,
                                         "--package-root", str(installed)], capture_output=True, text=True, encoding="utf-8")
@@ -137,6 +144,7 @@ try {{
             self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
             self.assertEqual(marker.read_text(encoding="utf-8"), "legacy")
             self.assertTrue((skills / "elx-level" / "SKILL.md").is_file())
+            self.assertEqual(list(skills.glob("oil-*")), [])
             self.assertIn("旧 Skill", result.stdout)
 
 

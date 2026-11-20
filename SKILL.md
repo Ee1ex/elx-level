@@ -36,6 +36,8 @@ python "<Skill包目录>/scripts/workflow.py" init --project <项目根目录> -
 
 按 `references/personal-execution-loop.md` 确定范围和验收，完成最小可验证切片、Diff 与一处记录；连续修复无进展时重新诊断。普通实现沿用授权，实质范围或风险变化才重新确认；低影响任务不机械要求先写失败测试。
 
+用户未点名 oil 且做法明确的低风险小改直接验证，跳过 oil 指引、安装检查和提示。用户点名，或探索、规划、排错、审查、治理、委托确有缺口时，才按[可选 oil 技能](references/oil-dev-skills.md)选择当前需要的一项。
+
 包内治理入口为 `core/project-vibe-spec/PVS.md`；按 `references/project-vibe-spec-bridge.md` 加载所需章节与模板，不要求外部 PVS 安装。包内入口缺失按包损坏处理。
 
 ## 验证、权限与交付

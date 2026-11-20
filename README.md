@@ -6,7 +6,7 @@
 
 <img src="assets/readme/hero.svg" alt="ELX Level：选择刚好的流程强度，保留完整项目记忆。四级责任档位 L1–L4，执行策略 AUTO / CONFIRM / MANUAL_ONLY" width="100%">
 
-![Version](https://img.shields.io/badge/version-2.2-5CE8CF?labelColor=0A101C&style=flat-square)
+![Version](https://img.shields.io/badge/version-3.0-5CE8CF?labelColor=0A101C&style=flat-square)
 ![LEVEL](https://img.shields.io/badge/LEVEL-1--4-23405F?labelColor=0A101C&style=flat-square)
 ![Python](https://img.shields.io/badge/Python-3.10%2B-23405F?labelColor=0A101C&style=flat-square)
 ![Platform](https://img.shields.io/badge/Platform-Codex%20%7C%20Claude%20Code%20%7C%20Cursor-23405F?labelColor=0A101C&style=flat-square)
@@ -19,14 +19,11 @@
 
 </div>
 
-## 🆕 2.2 更新：小任务更轻，过程更可靠
+## 🆕 3.0 按需选用 oil 开发技能
 
-- **按任务影响留记录**：小改动一条记录即可，多阶段任务再补需求、决策和进度，减少重复建档。
-- **接手入口更清晰**：Skill 主入口从 136 行精简至 60 行，按地图定位当前任务、实现与验证，详细规则按需读取。
-- **验证结果更可信**：绑定当前任务和文件内容，避免旧结果被当作新改动的通过依据。
-- **版本与安装更稳妥**：保护已有暂存和版本字段，校验实际安装文件，完善旧状态迁移与项目移动后的入口路径。
+改按钮文案时，Level 直接修改并验证。遇到原因不明的故障、存储格式变更或已写好的代码需要独立审查时，才按当前任务选择 oil。项目 LEVEL 决定需要承担的兼容、运营或交付责任。
 
-保留四级模型与旧模板；新增 26 项回归测试，总计 144 项。入口长度减少不等于已测得 Token 或耗时下降。完整变化见 [CHANGELOG](CHANGELOG.md#22---2026-09-06)。
+六个 oil Skill 由作者独立分发。实际需要的技能缺少时，你可以选择只装该项、一次装齐或本次沿用 Level。安装范围和外部 CLI 委托分别确认。[四级调用规则](references/oil-dev-skills.md) · [作者中文说明](https://github.com/oil-oil/oil-dev-skills/blob/main/README.zh-CN.md)
 
 ## ✨ 它解决什么问题
 
@@ -126,7 +123,7 @@ LEVEL 1 同时建立两层记忆，但小功能、小修改只需要 Progress/Ch
 - 🔢 `0.4.0` 的 LEVEL 1–4 保持原数字，其中旧 LEVEL 4 仍停在分析边界并等待执行确认；更老状态按协议迁移：旧 LEVEL 1 → 新 LEVEL 1、旧 LEVEL 2 → 新 LEVEL 3、旧 LEVEL 3 → 新 LEVEL 4。
 - 💾 迁移前会写入 `state.backup.json`，并在 `STATUS.md` 记录旧/新版本、等级和原因。
 
-当前版本为 `2.2`，本仓库不创建 GitHub Release，Git Tag 保持现状；更新内容见 CHANGELOG。
+当前版本为 `3.0`。安装前可核对所用目录的 `VERSION`。项目以 Git 提交和 [CHANGELOG](CHANGELOG.md) 记录版本，不创建 GitHub Release 或自动变更 Tag。
 
 ## 🗂️ 仓库结构
 

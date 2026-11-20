@@ -1,5 +1,5 @@
 {
-  "version": "2.2",
+  "version": "3.0",
   "language": "zh-CN",
   "cases": [
     {
@@ -352,7 +352,8 @@
         "level": 2,
         "record": "one_change_entry",
         "new_empty_ledgers": false,
-        "repeat_level_approval": false
+        "repeat_level_approval": false,
+        "load_oil_guide_or_check_installation": false
       },
       "files": [
         "LEVEL.md",
@@ -366,12 +367,16 @@
       "expected_output": {
         "level": 1,
         "record": "REQ+PROG+DEC",
-        "data_approval": true
+        "data_approval": true,
+        "route_on_real_compatibility_tradeoff": "oil-plan",
+        "review_implemented_format_change": "independent",
+        "verify_old_files_and_packaged_path": true
       },
       "files": [
         "LEVEL.md",
         "references/documentation-contract.md",
-        "references/usage-examples.md"
+        "references/usage-examples.md",
+        "references/oil-dev-skills.md"
       ]
     },
     {
@@ -419,9 +424,10 @@
         "inspect_permission_and_data_impact": true,
         "confirm_concrete_plan_before_implementation": true,
         "load_data_and_decision_gates": true,
-        "verify_authorization_failure_paths": true
+        "verify_authorization_failure_paths": true,
+        "review_implemented_permission_change": "independent"
       },
-      "files": ["references/project-vibe-spec-bridge.md", "references/risk-and-permissions.md", "core/project-vibe-spec/PVS.md", "core/project-vibe-spec/references/decision-gates.md"]
+      "files": ["references/project-vibe-spec-bridge.md", "references/risk-and-permissions.md", "core/project-vibe-spec/PVS.md", "core/project-vibe-spec/references/decision-gates.md", "references/oil-dev-skills.md"]
     },
     {
       "id": "same-session-read-delta",
@@ -495,6 +501,72 @@
         "confirm_compatibility_plan": true
       },
       "files": ["references/documentation-contract.md", "core/project-vibe-spec/PVS.md", "core/project-vibe-spec/references/document-maintenance.md"]
+    },
+    {
+      "id": "oil-l1-known-label",
+      "prompt": "LEVEL 1 离线插件已定位设置按钮和验证入口，只把按钮文案改为保存。当前宿主没有 oil。",
+      "expected_output": {
+        "level": 1, "perform_related_check": true, "record": "one_change_entry",
+        "load_oil_guide_or_check_installation": false, "offer_install": false
+      },
+      "files": ["SKILL.md", "references/documentation-contract.md"]
+    },
+    {
+      "id": "oil-l3-known-upstream-fix",
+      "prompt": "团队仓库的 Issue 已有失败用例、根因和维护者接受的修法，请完成局部修复并准备本地交接。",
+      "expected_output": {
+        "level": 3, "reproduce_baseline_and_run_repo_regression": true, "reuse_issue": true,
+        "start_new_plan_or_install_prompt": false, "publish_pr": false
+      },
+      "files": ["LEVEL.md", "references/oil-dev-skills.md"]
+    },
+    {
+      "id": "oil-l4-analysis-before-implementation",
+      "prompt": "评估订单、支付、库存接口的可行性。已有材料和原版 oil-plan，LEVEL 4 尚未批准实施。",
+      "expected_output": {
+        "level": 4, "use_existing_evidence": true, "compare_options_read_only": true,
+        "write_tests_or_specs": false, "start_external_runner": false, "gate": "level4-execution-review"
+      },
+      "files": ["LEVEL.md", "references/oil-dev-skills.md", "references/level4-capability-routing.md"]
+    },
+    {
+      "id": "oil-partial-install-and-decline",
+      "prompt": "需独立审查已有的高风险 Diff，宿主只装了 oil-plan。说明选项。用户随后选择本次不用新工具。",
+      "expected_output": {
+        "offer_only_on_actual_need": "oil-code-review",
+        "offer": ["selected_skill", "full_set", "continue_with_level"],
+        "explain_upstream_and_target_directory": true, "install_on_decline": false,
+        "repeat_prompt": false, "use_host_or_maintainer_for_independent_review": true,
+        "claim_self_review_as_independent": false
+      },
+      "files": ["references/oil-dev-skills.md", "references/risk-and-permissions.md"]
+    },
+    {
+      "id": "oil-worktree-inventory-only",
+      "prompt": "只想知道哪些 Git 工作树可以清理，当前宿主能读到 oil-govern。",
+      "expected_output": {
+        "route": "oil-govern", "scope": "read_only_inventory", "delete": false,
+        "start_project_or_install_other_skills": false
+      },
+      "files": ["SKILL.md", "references/oil-dev-skills.md", "references/risk-and-permissions.md"]
+    },
+    {
+      "id": "oil-unknown-import-read-only",
+      "prompt": "已接入 LEVEL 1，两种输入导入相同标签却得到不同结果。现有证据见 BUG，原版 oil-bug-fix 可用。请先只查原因。",
+      "expected_output": {
+        "route": "oil-bug-fix", "use_existing_bug_record": true,
+        "reproduce_with_existing_evidence": true, "write_tests_or_logs": false
+      },
+      "files": ["references/oil-dev-skills.md", "references/personal-execution-loop.md"]
+    },
+    {
+      "id": "oil-delegation-needs-separate-scope",
+      "prompt": "已安装 oil-delegate。如果让另一个 CLI 复核当前结论，我还得决定什么？现在只了解，暂不发送。",
+      "expected_output": {
+        "explain_runner_materials_access_cost": true, "review_mode": "read_only",
+        "start_runner_or_send_materials": false, "treat_installation_as_consent": false
+      },
+      "files": ["references/oil-dev-skills.md", "references/risk-and-permissions.md"]
     }
   ]
 }

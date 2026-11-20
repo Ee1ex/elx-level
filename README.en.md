@@ -6,7 +6,7 @@
 
 <img src="assets/readme/hero.svg" alt="ELX Level: choose the right workflow depth and keep the full project memory. Four responsibility levels L1–L4 with AUTO / CONFIRM / MANUAL_ONLY execution modes" width="100%">
 
-![Version](https://img.shields.io/badge/version-2.2-5CE8CF?labelColor=0A101C&style=flat-square)
+![Version](https://img.shields.io/badge/version-3.0-5CE8CF?labelColor=0A101C&style=flat-square)
 ![LEVEL](https://img.shields.io/badge/LEVEL-1--4-23405F?labelColor=0A101C&style=flat-square)
 ![Python](https://img.shields.io/badge/Python-3.10%2B-23405F?labelColor=0A101C&style=flat-square)
 ![Platform](https://img.shields.io/badge/Platform-Codex%20%7C%20Claude%20Code%20%7C%20Cursor-23405F?labelColor=0A101C&style=flat-square)
@@ -19,14 +19,11 @@ It puts LEVEL 1 / LEVEL 2 first, keeps routine progress in `AUTO`, and pauses on
 
 </div>
 
-## 🆕 2.2 update: lighter tasks, more reliable records
+## 🆕 3.0 optional oil development skills
 
-- **Scale records to task impact**: use one record for small changes; add requirements, decisions and progress for multi-stage work to reduce duplicate documentation.
-- **Clearer handoff entry**: the main Skill file shrinks from 136 to 60 lines; follow the map to the current task, implementation and verification, loading detailed rules when needed.
-- **Current verification evidence**: bind results to the task and file content so stale results cannot stand in for checks on new changes.
-- **Safer versioning and installation**: protect staged work and version fields, validate installed files, and improve legacy-state migration and entry paths after moving a project.
+For a button label, Level edits and checks the result directly. An unexplained failure, a storage format change, or a diff that needs independent review can call for a specialist skill. The project's LEVEL determines its compatibility, operational and delivery obligations.
 
-The four-level model and legacy templates remain. There are 26 additional regression tests, 144 in total. A shorter entry file is not a measured reduction in tokens or elapsed time. See the [CHANGELOG](CHANGELOG.md#22---2026-09-06) for details.
+The author distributes the six oil skills independently. When a needed skill is missing, choose to install that skill, install all six, or continue with Level for this task. Installation and delegation to an external CLI require separate decisions. [Routing by LEVEL](references/oil-dev-skills.md) · [Upstream guide](https://github.com/oil-oil/oil-dev-skills)
 
 ## ✨ What Problem It Solves
 
@@ -126,7 +123,7 @@ Adapters reference only the current LEVEL, state, and layering strategy instead 
 - 🔢 LEVEL 1–4 from `0.4.0` keep their numeric meaning, while the old LEVEL 4 remains at its analysis boundary awaiting execution confirmation; older states migrate by protocol: old LEVEL 1 → new LEVEL 1, old LEVEL 2 → new LEVEL 3, and old LEVEL 3 → new LEVEL 4.
 - 💾 Before migrating, a `state.backup.json` is written and `STATUS.md` records the old/new level, schema, and reason.
 
-The current version is `2.2`. This repository does not create GitHub Releases or automatically change tags. Updates are recorded in CHANGELOG.
+This source tree is version `3.0`. Check the checkout's `VERSION` before installing. The project records versions in Git and the [CHANGELOG](CHANGELOG.md), without creating GitHub Releases or changing tags automatically.
 
 ## 🗂️ Repository Layout
 

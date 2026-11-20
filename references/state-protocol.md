@@ -38,6 +38,7 @@ docs/elx-level/
 - 项目文件保存相对路径，不保存个人绝对路径。
 - 先写同目录临时文件，校验成功后原子替换。
 - 更新前把有效旧状态复制为 `state.backup.json`。
+- 宿主登记已批准的 `current_task` 时可复用 `scripts/workflow.py` 的 `validate_state` 和 `atomic_write_json`，按上述写入规则保存，再执行 `validate --project <项目目录>`。
 - 不保存密钥、Token、个人信息、完整日志或大段命令输出。
 - 未运行的检查必须写成待验证，不得写成通过。
 
